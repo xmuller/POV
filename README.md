@@ -1,4 +1,4 @@
-# Afficheur à persistance rétienne
+# Afficheur à persistance rétinienne
 
 ## Construction
 
