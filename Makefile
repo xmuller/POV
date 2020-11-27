@@ -9,7 +9,7 @@ ARDUINO ?= 0
 #  Global build conf
 CC= avr-gcc
 OBJCOPY= avr-objcopy
-CFLAGS= -O3
+CFLAGS= -O3 -I.
 MCFLAGS= -mmcu=atmega328p
 
 ifeq (${ARDUINO},0)
@@ -31,7 +31,7 @@ ${BUILDDIR}/pov.bin: ${BUILDDIR}/pov.out
 > ${OBJCOPY} -O binary $< $@
 
 ${BUILDDIR}/pov.out:
-> ${CC} ${CFLAGS} ${MCFLAGS} pov.c -o $@
+> ${CC} ${CFLAGS} ${MCFLAGS} pov.c timer.c -o $@
 
 flash: ${BUILDDIR}/pov.bin
 > avrdude -p m328p -c ${AVG_AVRDUDE} -P ${DEVICE} -U flash:w:$<
