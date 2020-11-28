@@ -12,31 +12,34 @@ OBJCOPY= avr-objcopy
 CFLAGS= -O3 -I.
 MCFLAGS= -mmcu=atmega328p
 
+include common/build_common.mk
+
 ifeq (${ARDUINO},0)
   CFLAGS += -DF_CPU=13000000UL
   AVG_AVRDUDE= usbasp
 else
   CFLAGS += -DF_CPU=16000000UL
-  AVG_AVRDUDE= arduino
+  AVG_AVRDUDE= arduino -P ${DEVICE}
 endif
 
+PROGRAMS_MAIN = pov led_PB6 serial
+BINS = $(addprefix $(BUILDDIR)/, $(addsuffix .bin,${PROGRAMS_MAIN}))
 
-# TARGETS
-all: ${BUILDDIR} ${BUILDDIR}/pov.bin
+all: MK_BUILDDIR $(BINS)
 
-${BUILDDIR}:
+MK_BUILDDIR:
 > mkdir -p ${BUILDDIR}
 
-${BUILDDIR}/pov.bin: ${BUILDDIR}/pov.out
+$(BUILDDIR)/%.bin : $(BUILDDIR)/%.out
 > ${OBJCOPY} -O binary $< $@
 
-${BUILDDIR}/pov.out:
-> ${CC} ${CFLAGS} ${MCFLAGS} pov.c timer.c -o $@
+$(BUILDDIR)/%.out : %.c
+> $(CC) $(CFLAGS) ${MCFLAGS} $< $(COMMON_SRCS) -o $@
 
-flash: ${BUILDDIR}/pov.bin
-> avrdude -p m328p -c ${AVG_AVRDUDE} -P ${DEVICE} -U flash:w:$<
+$(addprefix flash_, ${PROGRAMS_MAIN}):
+> avrdude -p m328p -c $(AVG_AVRDUDE) -U flash:w:$<
 
 .PHONY: clean flash
 
 clean:
-> rm -rf ${BUILDDIR}
+> rm -rf $(BUILDDIR)
