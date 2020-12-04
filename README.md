@@ -2,16 +2,9 @@
 
 ## Construction
 
-- POV:
-
 ```bash
 make
-make flash DEVICE=/dev/ttyACM0
+make flash_<filename_without_ext> 
 ```
 
-- Arduino:
-
-```bash
-make ARDUINO=1
-make flash ARDUINO=1
-```
+Available binaries: led_PB6 pov serial
