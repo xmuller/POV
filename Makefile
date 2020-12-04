@@ -13,13 +13,14 @@ MCFLAGS= -mmcu=atmega328p
 
 include common/build_common.mk
 
-PROGRAMS_MAIN = pov led_PD6 serial
+PROGRAMS_MAIN = pov led_PD6 serial test_spi
 BINS = $(addprefix $(BUILDDIR)/, $(addsuffix .bin,${PROGRAMS_MAIN}))
 
 all: MK_BUILDDIR $(BINS)
 
 MK_BUILDDIR:
 > mkdir -p ${BUILDDIR}
+> rm -rf ${BUILDDIR}/*
 
 $(BUILDDIR)/%.bin : $(BUILDDIR)/%.out
 > ${OBJCOPY} -O binary $< $@
