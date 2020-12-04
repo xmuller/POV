@@ -7,6 +7,14 @@ void main()
     SPI_init();
     
     while(1) {
+        SPI_Set_ALL_Leds_UP();
+        SPI_MasterTransmit();
+        _delay_ms(500);
+
+        SPI_Set_ALL_Leds_DOWN();
+        SPI_MasterTransmit();
+        _delay_ms(500);
+
         // enable individual led
         SPI_Set_Led_UP(15);
         SPI_Set_Led_UP(0);
@@ -18,16 +26,15 @@ void main()
         SPI_Set_Led_DOWN(0);
         SPI_MasterTransmit();
         _delay_ms(500);
-        
 
         // enable selected led and disable others
-        leds_state = 1 << 2 | 1 << 3 | 1 << 5 | 1 << 6 ;
-        SPI_MasterTransmit();
-        _delay_ms(500);
+        // leds_state = 1 << 2 | 1 << 3 | 1 << 5 | 1 << 6 ;
+        // SPI_MasterTransmit();
+        // _delay_ms(500);
 
         // turn off all leds
         leds_state = 0;
         SPI_MasterTransmit();
-        _delay_ms(1000);
+        _delay_ms(2000);
     }
 }

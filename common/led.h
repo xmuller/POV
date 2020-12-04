@@ -8,8 +8,8 @@ void SPI_MasterTransmit();
 void SPI_Set_Led_UP(char id);
 void SPI_Set_Led_DOWN(char id);
 
-// void SPI_TurnOnAllLeds();
-// void SPI_TurnOffAllLeds();
+void SPI_Set_ALL_Leds_UP();
+void SPI_Set_ALL_Leds_DOWN();
 
 //inline void SPI_Disable_Led() {
 

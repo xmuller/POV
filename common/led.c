@@ -2,7 +2,7 @@
 #include <util/delay.h>
 #include <avr/interrupt.h>
 
-unsigned short leds_state = 0b1111111111111111;
+short leds_state = 0b1111111111111111;
 
 void SPI_Set_Led_UP(char id) {
     leds_state |= (1 << id);
@@ -31,13 +31,13 @@ void SPI_MasterTransmit()
     #define EXTERNAL_LEDS &leds_state+8
 
     /* Start transmission */
-    SPDR = (char)EXTERNAL_LEDS;
+    SPDR = (char)*EXTERNAL_LEDS;
 
     //_delay_ms(10);
     /* Wait for transmission complete */
     while(!(SPSR & (1<<SPIF)));
 
-    SPDR = (char)INTERNAL_LEDS;
+    SPDR = (char)*INTERNAL_LEDS;
 
     #undef INTERNAL_LEDS
     #undef EXTERNAL_LEDS
@@ -50,12 +50,10 @@ void SPI_MasterTransmit()
     PORTC &= (0 << PC2);    // disable latch (time to write > time to flush)
 }
 
-void SPI_TurnOnAllLeds() {
-    leds_state = 0b1111111111111111;
-    SPI_MasterTransmit();
+void SPI_Set_ALL_Leds_UP() {
+    leds_state = 0b1111111111111111;    
 }
 
-void SPI_TurnOffAllLeds() {
-    leds_state = 0;
-    SPI_MasterTransmit();
+void SPI_Set_ALL_Leds_DOWN() {
+    leds_state = 0;    
 }
