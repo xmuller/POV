@@ -8,7 +8,11 @@ void SPI_init()
 {
     /* Set MOSI and SCK output, all others input */
     DDRB = (1<<DDB3)|(1<<DDB5);
-    DDRB = (0<<PC1); // OE
+
+    DDRC |= _BV(PC1) | _BV(PC2);        //Set latch and OE to 0
+    
+    PORTC &= ~_BV(PC1);
+    PORTC &= ~_BV(PC2);
 
     /* Enable SPI, Master, set clock rate fck/16 */
     SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR0);
@@ -28,15 +32,16 @@ void SPI_MasterTransmit()
     /* Start transmission */
     unsigned char buffer[2] = { 0b11111111, 0b11111111 };
     SPDR = buffer[0];
-    _delay_ms(10);
+    //_delay_ms(10);
     /* Wait for transmission complete */
     while(!(SPSR & (1<<SPIF)));
 
     SPDR = buffer[1];
-    _delay_ms(10);
+    //_delay_ms(10);
     /* Wait for transmission complete */
     while(!(SPSR & (1<<SPIF)));
 
-    DDRB = (1<<PC2);    //latch
-    DDRB = (0<<PC2);
+    PORTC |= _BV(PC2);      //latch
+    PORTC &= ~_BV(PC2);
+
 }
