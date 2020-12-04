@@ -2,7 +2,7 @@
 #include <util/delay.h>
 #include <avr/interrupt.h>
 
-short leds_state = 0b1111111111111111;
+unsigned short leds_state = 0b1111111111111111;
 
 void SPI_Set_Led_UP(char id) {
     leds_state |= (1 << id);
@@ -27,17 +27,17 @@ void SPI_init()
 
 void SPI_MasterTransmit()
 {
-    #define INTERNAL_LEDS &leds_state
-    #define EXTERNAL_LEDS &leds_state+8
+    #define INTERNAL_LEDS leds_state >> 0
+    #define EXTERNAL_LEDS leds_state >> 8
 
     /* Start transmission */
-    SPDR = (char)*EXTERNAL_LEDS;
+    SPDR = EXTERNAL_LEDS;
 
     //_delay_ms(10);
     /* Wait for transmission complete */
     while(!(SPSR & (1<<SPIF)));
 
-    SPDR = (char)*INTERNAL_LEDS;
+    SPDR = INTERNAL_LEDS;
 
     #undef INTERNAL_LEDS
     #undef EXTERNAL_LEDS

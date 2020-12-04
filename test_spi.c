@@ -28,9 +28,9 @@ void main()
         _delay_ms(500);
 
         // enable selected led and disable others
-        // leds_state = 1 << 2 | 1 << 3 | 1 << 5 | 1 << 6 ;
-        // SPI_MasterTransmit();
-        // _delay_ms(500);
+        leds_state = 1 << 2 | 1 << 3 | 1 << 5 | 1 << 6 ;
+        SPI_MasterTransmit();
+        _delay_ms(500);
 
         // turn off all leds
         leds_state = 0;
