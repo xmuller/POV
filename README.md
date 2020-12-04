@@ -4,7 +4,5 @@
 
 ```bash
 make
-make flash_<filename_without_ext> 
+make flash BIN=build/<binary_file>
 ```
-
-Available binaries: led_PB6 pov serial

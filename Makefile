@@ -27,8 +27,8 @@ $(BUILDDIR)/%.bin : $(BUILDDIR)/%.out
 $(BUILDDIR)/%.out : %.c
 > $(CC) $(CFLAGS) ${MCFLAGS} $< $(COMMON_SRCS) -o $@
 
-$(addprefix flash_, ${PROGRAMS_MAIN}):
-> avrdude -p m328p -c usbasp -U flash:w:$<
+flash:
+> avrdude -p m328p -c usbasp -U flash:w:${BIN}
 
 .PHONY: clean flash
 
