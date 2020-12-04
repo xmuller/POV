@@ -2,60 +2,60 @@
 #include <util/delay.h>
 #include <avr/interrupt.h>
 
-unsigned char leds_packet[2] = { 0b00000000, 0b00000000 };
-unsigned char leds_packet_2[2] = { 0b11111111, 0b11111111 };
+unsigned short leds_state = 0b1111111111111111;
 
 void SPI_Set_Led_UP(char id) {
-    *leds_packet = (1 << id);
+    leds_state |= (1 << id);
 }
 
 void SPI_Set_Led_DOWN(char id) {
-    *leds_packet = (0 << id);
+    leds_state &= (0 << id);
 }
 
 void SPI_init()
 {
     /* Set MOSI and SCK output, all others input */
-    DDRB = (1<<DDB3)|(1<<DDB5);
+    DDRB |= (1<<DDB3)|(1<<DDB5)|(1<<PB2); // MOSI, SCK, SS
 
-    DDRC = (1<<PC1) | (1<<PC2);        //Set latch and OE to 0
+    DDRC |= (1<<PC1) | (1<<PC2);        //Set latch and OE to 0
     
-    PORTC = (0 << PC1) & (0 << PC2);
+    PORTC &= (0 << PC1) & (0 << PC2);
 
     /* Enable SPI, Master, set clock rate fck/16 */
-    SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR0);
+    SPCR |= (1<<SPE)|(1<<MSTR)|(1<<SPR0);
 } 
 
-char SPI_SlaveReceive(void)
+void SPI_MasterTransmit()
 {
-    /* Wait for reception complete */
+    #define INTERNAL_LEDS &leds_state
+    #define EXTERNAL_LEDS &leds_state+8
+
+    /* Start transmission */
+    SPDR = (char)EXTERNAL_LEDS;
+
+    //_delay_ms(10);
+    /* Wait for transmission complete */
     while(!(SPSR & (1<<SPIF)));
-    
-    /* Return Data Register */
-    return SPDR;
+
+    SPDR = (char)INTERNAL_LEDS;
+
+    #undef INTERNAL_LEDS
+    #undef EXTERNAL_LEDS
+
+    //_delay_ms(10);
+    /* Wait for transmission complete */
+    while(!(SPSR & (1<<SPIF)));
+
+    PORTC |= (1 << PC2);    // enable latch
+    PORTC &= (0 << PC2);    // disable latch (time to write > time to flush)
 }
 
-void SPI_MasterTransmit(int i)
-{
-    /* Start transmission */
-    if (i == 0) 
-        SPDR = leds_packet[0];
-    else
-        SPDR = leds_packet_2[0];
+void SPI_TurnOnAllLeds() {
+    leds_state = 0b1111111111111111;
+    SPI_MasterTransmit();
+}
 
-    //_delay_ms(10);
-    /* Wait for transmission complete */
-    while(!(SPSR & (1<<SPIF)));
-
-    if (i == 0) 
-        SPDR = leds_packet[1];
-    else
-        SPDR = leds_packet_2[1];
-
-    //_delay_ms(10);
-    /* Wait for transmission complete */
-    while(!(SPSR & (1<<SPIF)));
-
-    PORTC = (1 << PC2);    // enable latch
-    PORTC = (0 << PC2);    // disable latch (time to write > time to flush)
+void SPI_TurnOffAllLeds() {
+    leds_state = 0;
+    SPI_MasterTransmit();
 }

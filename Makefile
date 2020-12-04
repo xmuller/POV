@@ -7,7 +7,7 @@ BUILDDIR := build
 #  Global build conf
 CC= avr-gcc
 OBJCOPY= avr-objcopy
-CFLAGS= -O3 -I.
+CFLAGS= -Os -I.
 CFLAGS += -DF_CPU=13000000UL
 MCFLAGS= -mmcu=atmega328p
 

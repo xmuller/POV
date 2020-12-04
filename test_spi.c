@@ -1,25 +1,33 @@
 #include "led.h"
 #include <avr/io.h>
 #include <util/delay.h>
-#include <avr/interrupt.h>
-#include "common/serial.h"
-#include "stdlib.h"
-
-char str[20];
 
 void main()
 {
-    // USART_Init(MYUBRR);
-
     SPI_init();
-    // SPI_S laveReceive();
+    
     while(1) {
-        // SPI_Set_Led_UP(3);
-        SPI_MasterTransmit(1);
+        // enable individual led
+        SPI_Set_Led_UP(15);
+        SPI_Set_Led_UP(0);
+        SPI_MasterTransmit();
         _delay_ms(500);
 
-        // SPI_Set_Led_DOWN(3);
-        SPI_MasterTransmit(0);
+        // disable individual led
+        SPI_Set_Led_DOWN(15);
+        SPI_Set_Led_DOWN(0);
+        SPI_MasterTransmit();
         _delay_ms(500);
+        
+
+        // enable selected led and disable others
+        leds_state = 1 << 2 | 1 << 3 | 1 << 5 | 1 << 6 ;
+        SPI_MasterTransmit();
+        _delay_ms(500);
+
+        // turn off all leds
+        leds_state = 0;
+        SPI_MasterTransmit();
+        _delay_ms(1000);
     }
 }
