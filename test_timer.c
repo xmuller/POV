@@ -1,5 +1,5 @@
 #include <avr/io.h>
-#include <stdlib.h>
+#include <stdio.h>
 #include <util/delay.h>
 
 #include "common/serial.h"
@@ -13,9 +13,10 @@ void main()
     while (1)
     {
         unsigned long time1 = time_micro();
-        _delay_ms(500);
+        _delay_ms(1000);
         unsigned long time2 = time_micro();
-        unsigned char buffer[16];
-        USART_Transmit_String(itoa(time2, buffer, 10));
+        char buffer[16];
+        sprintf(buffer, "%d\n", time2);
+        USART_Transmit_String(buffer);
     }
 }

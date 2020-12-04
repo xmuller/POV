@@ -7,37 +7,36 @@
 #define MS_CYCLES (F_CPU / 1000)
 #define US_CYCLES (F_CPU / 1000000)
 
-static unsigned int count = 0;
+volatile static unsigned int count = 0;
 
-ISR(TIMER0_OVF_vect)
+ISR(TIM0_OVF_vect)
 {
     count++;
 }
 
-//TIFR0 //Timer interrupt register
-//TOV0 //Timer overflow flag
 void init_timer()
 {
-    TIFR0 |= _BV(TOV0);
+    SREG |= (1 << 7);
+    TIMSK0 |= _BV(TOIE0);
 }
 
 //TCNT0 //Timer register
-static long time()
+static inline long time()
 {
     return count * 256 + TCNT0;
 }
 
 unsigned short time_sec()
 {
-    return (short)(time() / S_CYCLES);
+    return (unsigned short)(time() / S_CYCLES);
 }
 
 unsigned int time_milli()
 {
-    return (int)(time() / MS_CYCLES);
+    return (unsigned int)(time() / MS_CYCLES);
 }
 
 unsigned long time_micro()
 {
-    return (long)(time() / US_CYCLES);
+    return (unsigned long)(time() / US_CYCLES);
 }
