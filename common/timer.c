@@ -9,7 +9,7 @@
 
 volatile static unsigned int count = 0;
 
-ISR(TIM0_OVF_vect)
+ISR(TIMER0_OVF_vect)
 {
     count++;
 }
@@ -18,6 +18,7 @@ void init_timer()
 {
     SREG |= (1 << 7);
     TIMSK0 |= _BV(TOIE0);
+    TCCR0B |= _BV(CS00);
 }
 
 //TCNT0 //Timer register

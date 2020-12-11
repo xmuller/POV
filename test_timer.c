@@ -16,7 +16,7 @@ void main()
         _delay_ms(1000);
         unsigned long time2 = time_micro();
         char buffer[16];
-        sprintf(buffer, "%d\n", time2);
+        sprintf(buffer, "%d\n", time2-time1);
         USART_Transmit_String(buffer);
     }
 }
