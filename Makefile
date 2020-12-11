@@ -7,13 +7,13 @@ BUILDDIR := build
 #  Global build conf
 CC= avr-gcc
 OBJCOPY= avr-objcopy
-CFLAGS= -Os -I.
+CFLAGS= -O3 -I.
 CFLAGS += -DF_CPU=13000000UL
 MCFLAGS= -mmcu=atmega328p
 
 include common/build_common.mk
 
-PROGRAMS_MAIN = pov led_PD6 serial test_spi
+PROGRAMS_MAIN = pov led_PD6 serial test_spi hall_PD2
 BINS = $(addprefix $(BUILDDIR)/, $(addsuffix .bin,${PROGRAMS_MAIN}))
 
 all: MK_BUILDDIR $(BINS)
