@@ -13,7 +13,7 @@ MCFLAGS= -mmcu=atmega328p
 
 include common/build_common.mk
 
-PROGRAMS_MAIN = pov led_PD6 serial test_spi hall_PD2
+PROGRAMS_MAIN = pov led_PD6 serial test_spi hall_PD2 test_timer
 BINS = $(addprefix $(BUILDDIR)/, $(addsuffix .bin,${PROGRAMS_MAIN}))
 
 all: MK_BUILDDIR $(BINS)

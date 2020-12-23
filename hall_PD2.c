@@ -10,12 +10,15 @@
 
 void main()
 {
-    USART_Init(MYUBRR);
-    sei(); 
-    PCMSK0  |= (1 << PCINT0);
+  SPI_init();
+  USART_Init(MYUBRR);
+  sei(); 
+  
   while (1) {
-       USART_Transmit('0');
-
-      
+    
+    USART_Transmit_String("no");
+    EIMSK |= (1 << INT0);
+    _delay_ms(1000);
+    //PCMSK0  |= (1 << PCINT0);
   }
 }
