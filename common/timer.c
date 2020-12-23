@@ -11,7 +11,7 @@
 #define US_CYCLES (F_CPU / 1000000)
 
 volatile static unsigned int count = 0;   //Nombre de cycle 
-volatile static unsigned int nbCycle = 0; //Nombre de cycle nécessaire pour faire 1 ms
+volatile static unsigned int nbCycle = 0; //Nombre de cycle nécessaire pour faire 1 s
 
 volatile static unsigned int seconds = 0;
 volatile static unsigned int minutes = 0;
