@@ -1,21 +1,24 @@
 #include <avr/io.h>
 #include <util/delay.h>
+#include <stdio.h>
 #include <avr/interrupt.h>
 
 #include "common/serial.h"
+#include "timer.h"
 #include "led.h"
+
+static volatile unsigned int velocity = 0;
 
 ISR(INT0_vect) //Sans interruption, pour lire c'est (PIND & _BV(PD2))
 {
-   SPI_Set_ALL_Leds_UP();
-   SPI_MasterTransmit();
-   _delay_ms(50);
-   SPI_Set_ALL_Leds_DOWN();
-   SPI_MasterTransmit();
-   EIMSK &= (0 << INT0);
-
+    setAngle(0);
+    velocity = getVelocityAndReset();
 }
 
+unsigned int getVelocity()
+{
+    return velocity;
+}
 
 int getHallSensor(){
     return (PIND & _BV(PD2));

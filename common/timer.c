@@ -2,51 +2,68 @@
 #include <util/delay.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <math.h>
 
 #include "timer.h"
 #include "serial.h"
 
-#define S_CYCLES F_CPU
-#define MS_CYCLES (F_CPU / 1000)
-#define US_CYCLES (F_CPU / 1000000)
+unsigned int countTimer0 = 0;        //Nombre de cycle en cours sur le timer0 
+unsigned long int nbCycleTimer0 = 0; //Nombre de cycle nécessaire pour faire 1s
 
-volatile static unsigned int count = 0;   //Nombre de cycle 
-volatile static unsigned int nbCycle = 0; //Nombre de cycle nécessaire pour faire 1 s
+unsigned int countTimer1 = 0;        //Nombre de cycle en cours sur le timer1 
 
-volatile static unsigned int seconds = 0;
-volatile static unsigned int minutes = 0;
-volatile static unsigned int hours = 0;
+unsigned int getVelocityAndReset()  //À appeler chaque fois que l'on passe sur l'aimant
+{   
+    unsigned int velocity = countTimer1;
+    countTimer1 = 0;
+    return velocity;   
+}
+
+unsigned int seconds = 0;
+unsigned int minutes = 0;
+unsigned int hours = 0;
 
 bool etallonnage = false;
 
-int getHours() {  return hours;   }
-int getMinutes() {  return minutes; }
-int getSeconds()    {   return seconds; }
+double angle = 0;
+double angleHour = 0;
+double angleMinute = 0;
 
-//#define FUSE_CKOUT
+
+double getAngle()   {   return angle;   }
+double getAngleMinute()   {   return angleMinute;   }
+double getAngleHour()   {   return angleHour;   }
+void setAngle(double ang)   {   angle = ang;    }
+
+unsigned int getHours() {  return hours;   }
+unsigned int getMinutes() {  return minutes; }
+unsigned int getSeconds()    {   return seconds; }
 
 ISR(TIMER0_OVF_vect)
 {
-    if(etallonnage == true){
-        nbCycle++;
-    }
+    if(etallonnage == true)
+        nbCycleTimer0++;  
     else
     {
-        count++;
-        if(count == nbCycle * 256 * (2^8 - 8))
+        countTimer0++;
+        if(countTimer0 == nbCycleTimer0)
         {
-            count = 0;
+            countTimer0 = 0;
             seconds++;
             if(seconds == 60)
             {
                 seconds = 0;
                 minutes++;
+                angleMinute += 2 * M_PI / 60;
                 if (minutes == 60)
                 {
+                    angleMinute = 0;
                     minutes = 0;
                     hours++;
+                    angleHour += 2 * M_PI / 12;
                     if (hours == 24)
                     {
+                        angleHour = 0;
                         hours = 0;
                     }
                     
@@ -57,45 +74,23 @@ ISR(TIMER0_OVF_vect)
     }  
 }
 
-
+ISR(TIMER1_OVF_vect)
+{
+    countTimer1++;        
+}
 
 void init_timer()
 {
     sei();
     SREG |= (1 << 7);
     
-    //CLKPR |= FUSE_CKOUT;
-    TIMSK0 |= _BV(TOIE0);       //Allow clock0 interrupt
-    TCCR0B |= _BV(CS00);
+    TIMSK0 |= (1 << TOIE0);       //Allow clock0 interrupt
+    TCCR0B |= (1 << CS02);        //Set clock0 prescaler to 256
+
+    TIMSK1 |= (1 << TOIE1);       //Allow clock1 interrupt
+    TCCR1B |= (1 << CS10);      //Set clock1 prescaler to 1
     
-    /*CLKPR |= _BV(CLKPCE);       //Clock Prescaler Change Enable
-    CLKPR |= _BV(CLKPS2);      //Clock Division Factor : 256
-    //CS02 mets le prescaler à 256
-    TCCR0B |= (1 << CS02 && 0 << WGM02);        //bits WGMX permettent de définir le mode de
-    TCCR0A |= (0 << WGM00 && 0 << WGM01);       //comptage (tous à 0 = mode normal) */
-    char buf[16];
     etallonnage = true;
     _delay_ms(1000);
-    etallonnage = false;    
-}
-
-//TCNT0 //Timer register
-static inline long time()
-{
-    return count * 256 + TCNT0;
-}
-
-unsigned short time_sec()
-{
-    return (unsigned short)(time() / S_CYCLES);
-}
-
-unsigned int time_milli()
-{
-    return (unsigned int)(time() / MS_CYCLES);
-}
-
-unsigned long time_micro()
-{
-    return (unsigned long)(time() / US_CYCLES);
+    etallonnage = false;  
 }

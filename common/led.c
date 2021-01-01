@@ -1,8 +1,15 @@
+#define __DELAY_BACKWARD_COMPATIBLE__
+
 #include <avr/io.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
 
+#include "timer.h"
+#include "encoder.h"
+
 unsigned short leds_state = 0b1111111111111111;
+
+unsigned int vitesse = 10;
 
 void SPI_Set_Led_UP(char id) {
     leds_state |= (1 << id);
@@ -56,4 +63,28 @@ void SPI_Set_ALL_Leds_UP() {
 
 void SPI_Set_ALL_Leds_DOWN() {
     leds_state = 0;    
+}
+
+void setBigNeedle()
+{
+    for(int i = 0; i < 16; i++)
+    {
+        SPI_Set_Led_UP(i);
+        SPI_MasterTransmit();
+        _delay_us(getVelocity());
+        SPI_Set_Led_DOWN(i);
+        SPI_MasterTransmit();
+    }
+}
+
+void setLittleNeedle()
+{
+    for(int i = 0; i < 10; i++)
+    {
+        SPI_Set_Led_UP(i);
+        SPI_MasterTransmit();
+        _delay_us(getVelocity());
+        SPI_Set_Led_DOWN(i);
+        SPI_MasterTransmit();
+    }
 }
