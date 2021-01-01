@@ -14,8 +14,7 @@ void main()
   USART_Init(MYUBRR);
   sei(); 
   
-  while (1) {
-    
+  while (1) {   
     USART_Transmit_String("no");
     EIMSK |= (1 << INT0);
     _delay_ms(1000);
