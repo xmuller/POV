@@ -1,3 +1,5 @@
+#include "encoder.h"
+
 #include <avr/io.h>
 #include <util/delay.h>
 #include <stdio.h>
@@ -5,7 +7,7 @@
 
 #include "common/serial.h"
 #include "timer.h"
-#include "led.h"
+#include "led_spi.h"
 
 unsigned int velocity = 0;
 

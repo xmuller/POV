@@ -2,13 +2,13 @@
 #include <util/delay.h>
 #include <avr/interrupt.h>
 
-#include "led.h"
+#include <common/led_spi.h>
 #include "common/serial.h"
 #include "common/timer.h"
 #include "common/encoder.h"
 
 
-void main()
+int main()
 {
   SPI_init();
   USART_Init(MYUBRR);
@@ -20,4 +20,5 @@ void main()
     _delay_ms(1000);
     //PCMSK0  |= (1 << PCINT0);
   }
+  return 0;
 }

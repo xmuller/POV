@@ -1,13 +1,12 @@
 #include <avr/io.h>
 #include <util/delay.h>
 
-#include "led.h"
+#include <common/led_spi.h>
 #include "common/serial.h"
 #include "common/timer.h"
 #include "common/encoder.h"
 
-
-void main()
+int main()
 {
 
   USART_Init(MYUBRR);
@@ -21,4 +20,5 @@ void main()
     _delay_ms(500);
 
   }
+  return 0;
 }

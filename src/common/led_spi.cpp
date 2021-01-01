@@ -1,3 +1,5 @@
+#include "led_spi.h"
+
 #define __DELAY_BACKWARD_COMPATIBLE__
 
 #include <avr/io.h>

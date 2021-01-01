@@ -1,8 +1,8 @@
-#include "led.h"
+#include <common/led_spi.h>
 #include <avr/io.h>
 #include <util/delay.h>
 
-void main()
+int main()
 {
     SPI_init();
     
@@ -37,4 +37,5 @@ void main()
         SPI_MasterTransmit();
         _delay_ms(2000);
     }
+    return 0;
 }

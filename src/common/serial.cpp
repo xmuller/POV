@@ -1,3 +1,5 @@
+#include "serial.h"
+
 #include <avr/io.h>
 #include <util/delay.h>
 
@@ -25,7 +27,7 @@ void USART_Transmit(unsigned char data){
   UDR0 = data;
 }
 
-void USART_Transmit_String(unsigned char* s){
+void USART_Transmit_String(const char *s){
   while( *s != '\0') {
     USART_Transmit(*s);
     s++;

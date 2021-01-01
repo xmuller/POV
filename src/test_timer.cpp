@@ -6,7 +6,7 @@
 #include "common/timer.h"
 
 
-void main()
+int main()
 {
     USART_Init(MYUBRR);
     init_timer();
@@ -22,4 +22,5 @@ void main()
         USART_Transmit_String(buf);
         _delay_ms(1000);
     }
+    return 0;
 }

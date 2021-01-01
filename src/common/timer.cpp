@@ -1,10 +1,11 @@
+#include "timer.h"
+
 #include <avr/interrupt.h>
 #include <util/delay.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <math.h>
 
-#include "timer.h"
 #include "serial.h"
 
 
