@@ -13,9 +13,6 @@ ISR(INT0_vect)
 {
     setAngle(0);
     velocity = getVelocityAndReset();
-    char buf[16];
-    sprintf(buf, "vel %u\n", velocity);
-    USART_Transmit_String(buf);
 }
 
 void init_encoder()
