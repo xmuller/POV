@@ -19,13 +19,14 @@ void main()
     sei();
     while (1)
     {
+        EIMSK |= (1 << INT0);
         double vel = getVelocity();
         _delay_ms(100);
-        //char buf[16];
-        //sprintf(buf, "velocity %u\n", getVelocity());
-        //USART_Transmit_String(buf);
+        char buf[16];
+        sprintf(buf, "velocity %u\n", getVelocity());
+        USART_Transmit_String(buf);
         //SPI_Set_ALL_Leds_DOWN();
         //SPI_MasterTransmit();
-        setBigNeedle();
+        //setBigNeedle();
     }
 }

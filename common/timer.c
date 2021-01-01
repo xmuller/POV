@@ -7,6 +7,7 @@
 #include "timer.h"
 #include "serial.h"
 
+
 unsigned int countTimer0 = 0;        //Nombre de cycle en cours sur le timer0 
 unsigned long int nbCycleTimer0 = 0; //Nombre de cycle nécessaire pour faire 1s
 
@@ -14,7 +15,8 @@ unsigned int countTimer1 = 0;        //Nombre de cycle en cours sur le timer1
 
 unsigned int getVelocityAndReset()  //À appeler chaque fois que l'on passe sur l'aimant
 {   
-    unsigned int velocity = countTimer1;
+    unsigned int velocity = 2^16 * countTimer1 + TCNT1; 
+    TCNT1 = 0;
     countTimer1 = 0;
     return velocity;   
 }
@@ -76,7 +78,7 @@ ISR(TIMER0_OVF_vect)
 
 ISR(TIMER1_OVF_vect)
 {
-    countTimer1++;        
+    countTimer1++;    
 }
 
 void init_timer()
@@ -88,7 +90,7 @@ void init_timer()
     TCCR0B |= (1 << CS02);        //Set clock0 prescaler to 256
 
     TIMSK1 |= (1 << TOIE1);       //Allow clock1 interrupt
-    TCCR1B |= (1 << CS10);      //Set clock1 prescaler to 1
+    TCCR1B |= (1 << CS12);        //Set clock1 prescaler to 256
     
     etallonnage = true;
     _delay_ms(1000);

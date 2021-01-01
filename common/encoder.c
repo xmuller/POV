@@ -7,12 +7,13 @@
 #include "timer.h"
 #include "led.h"
 
-static volatile unsigned int velocity = 0;
+unsigned int velocity = 0;
 
 ISR(INT0_vect) //Sans interruption, pour lire c'est (PIND & _BV(PD2))
 {
     setAngle(0);
     velocity = getVelocityAndReset();
+    EIMSK &= (0 << INT0);
 }
 
 unsigned int getVelocity()
