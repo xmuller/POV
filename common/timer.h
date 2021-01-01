@@ -2,12 +2,14 @@
 
 void init_timer();
 
-int getHours();
-int getMinutes();
-int getSeconds();
+unsigned int getHours();
+unsigned int getMinutes();
+unsigned int getSeconds();
 
-int readTCNT0();
 
-unsigned short time_sec();
-unsigned int time_milli();
-unsigned long time_micro();
+double getAngle();
+double getAngleMinute();
+double getAngleHour();
+void setAngle(double ang);
+
+unsigned int getVelocityAndReset();

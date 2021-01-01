@@ -11,6 +11,9 @@ void SPI_Set_Led_DOWN(char id);
 void SPI_Set_ALL_Leds_UP();
 void SPI_Set_ALL_Leds_DOWN();
 
+void setBigNeedle();
+void setLittleNeedle();
+
 //inline void SPI_Disable_Led() {
 
 //    PORTC |= (1 << PC1);
