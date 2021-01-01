@@ -13,6 +13,7 @@ ISR(INT0_vect) //Sans interruption, pour lire c'est (PIND & _BV(PD2))
 {
     setAngle(0);
     velocity = getVelocityAndReset();
+    USART_Transmit_String("hello");
     EIMSK &= (0 << INT0);
 }
 

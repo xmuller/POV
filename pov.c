@@ -12,11 +12,13 @@
 
 void main()
 {
+    sei();
     SPI_init();
     USART_Init(MYUBRR);
     init_timer();
     EIMSK |= (1 << INT0);
-    sei();
+    EICRA |= (1 << ISC01);
+    EICRA &= (0 << ISC00);  //Génère une interruption à chaque fois que INT0 passe de 1 à 0
     while (1)
     {
         EIMSK |= (1 << INT0);
