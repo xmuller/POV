@@ -37,9 +37,23 @@ double getAngleMinute()   {   return angleMinute;   }
 double getAngleHour()   {   return angleHour;   }
 void setAngle(double ang)   {   angle = ang;    }
 
-unsigned int getHours() {  return hours;   }
-unsigned int getMinutes() {  return minutes; }
-unsigned int getSeconds()    {   return seconds; }
+unsigned int getHours() 
+{  
+    int hours = (countTimer0 / (nbCycleTimer0 * 60 * 12) ) % 60;
+    return hours;   
+}
+
+unsigned int getMinutes() 
+{  
+    int minutes = (countTimer0 / (nbCycleTimer0 * 60) ) % 60;
+    return minutes; 
+}
+
+unsigned int getSeconds()    
+{   
+    int seconds = (countTimer0 / nbCycleTimer0) % 60;
+    return seconds; 
+}
 
 ISR(TIMER0_OVF_vect)
 {
@@ -48,31 +62,8 @@ ISR(TIMER0_OVF_vect)
     else
     {
         countTimer0++;
-        if(countTimer0 == nbCycleTimer0)
-        {
+        if(countTimer0 == nbCycleTimer0 * 3600 * 12)
             countTimer0 = 0;
-            seconds++;
-            if(seconds == 60)
-            {
-                seconds = 0;
-                minutes++;
-                angleMinute += 2 * M_PI / 60;
-                if (minutes == 60)
-                {
-                    angleMinute = 0;
-                    minutes = 0;
-                    hours++;
-                    angleHour += 2 * M_PI / 12;
-                    if (hours == 24)
-                    {
-                        angleHour = 0;
-                        hours = 0;
-                    }
-                    
-                }
-                
-            }
-        }
     }  
 }
 
