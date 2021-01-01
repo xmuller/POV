@@ -9,12 +9,19 @@
 
 unsigned int velocity = 0;
 
-ISR(INT0_vect) //Sans interruption, pour lire c'est (PIND & _BV(PD2))
+ISR(INT0_vect) 
 {
     setAngle(0);
     velocity = getVelocityAndReset();
-    USART_Transmit_String("hello");
-    EIMSK &= (0 << INT0);
+    char buf[16];
+    sprintf(buf, "vel %u\n", velocity);
+    USART_Transmit_String(buf);
+}
+
+void init_encoder()
+{
+    EIMSK |= (1 << INT0);
+    EICRA |= (1 << ISC00) | (1 << ISC01);   //Génère une interruption à chaque fois que INT0 passe de 0 à 1
 }
 
 unsigned int getVelocity()
