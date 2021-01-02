@@ -79,8 +79,6 @@ if(NOT _ATMEGA328P_BUILD_SET)
 #  → GENERATE_BINARY\n\
 #  → GENERATE_FLASH_CMD\n\
 #    ")
-    message(STATUS ${target_name})
-    message(STATUS ${ARGN})
     add_executable(${target_name} ${ARGN})
 #    set(options
 #       GENERATE_BINARY
