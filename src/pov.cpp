@@ -15,13 +15,11 @@ int main()
     led_spi::init();
     serial::init();
     timer::init();
-
-    EIMSK = EIMSK | (1 << INT0); // enable external interrupt
+    encoder::init();
     sei();
     char buf[16];
     while (1)
     {
-        EIMSK = EIMSK | (1 << INT0);
         _delay_ms(100);
         sprintf(buf, "velocity %u\n", encoder::velocity);
         serial::transmit(buf);

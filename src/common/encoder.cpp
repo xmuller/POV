@@ -13,11 +13,16 @@
 namespace pov::encoder
 {
 
-ISR(INT0_vect) //Sans interruption, pour lire c'est (PIND & _BV(PD2))
+ISR(INT0_vect) 
 {
-    timer::setAngle(0);
-    velocity = timer::getVelocityAndReset();
-    EIMSK = EIMSK & (0 << INT0);
+    pov::timer::setAngle(0);
+    velocity = pov::timer::getVelocityAndReset();
+}
+
+void init()
+{
+    EIMSK = (1 << INT0);
+    EICRA = (1 << ISC00) | (1 << ISC01);   //Génère une interruption à chaque fois que INT0 passe de 0 à 1
 }
 
 unsigned int getVelocity()

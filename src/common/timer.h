@@ -8,25 +8,23 @@ namespace pov::timer
 constexpr uint8_t NB_MAX_TIMERS = 3;
 
 inline volatile bool etallonnage     = false;
-inline volatile unsigned int count   = 0; // Nombre de cycle
-inline volatile unsigned int nbCycle = 0; // Nombre de cycle nécessaire pour faire 1 s
 
-inline volatile unsigned int seconds = 0;
-inline volatile unsigned int minutes = 0;
-inline volatile unsigned int hours   = 0;
+inline volatile unsigned long int seconds = 0;
+inline volatile unsigned long int minutes = 0;
+inline volatile unsigned long int hours   = 0;
 
 inline volatile double angle = 0;
 inline volatile double angleHour = 0;
 inline volatile double angleMinute = 0;
 
-inline volatile unsigned int countTimer0 = 0;        //Nombre de cycle en cours sur le timer0
-inline volatile unsigned long int nbCycleTimer0 = 0; //Nombre de cycle nécessaire pour faire 1s
-inline volatile unsigned int countTimer1 = 0;        //Nombre de cycle en cours sur le timer1
+inline volatile unsigned long int countTimer0 = 0;        //Nombre de cycle en cours sur le timer0
+inline volatile unsigned long int nbCycleTimer0 = 0;     //Nombre de cycle nécessaire pour faire 1s
+inline volatile unsigned long int countTimer1 = 0;        //Nombre de cycle en cours sur le timer1
 
 // ↓↓↓↓↓ TO REMOVE → replace with direct acess
-unsigned int getHours();
-unsigned int getMinutes();
-unsigned int getSeconds();
+unsigned long int getHours();
+unsigned long int getMinutes();
+unsigned long int getSeconds();
 
 double getAngle();
 double getAngleMinute();

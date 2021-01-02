@@ -31,7 +31,7 @@ void init() {
 
 unsigned int getVelocityAndReset()  //À appeler chaque fois que l'on passe sur l'aimant
 {
-    unsigned int velocity = (1 << 12) * countTimer1 + TCNT1;
+    unsigned int velocity = (1 << 12)  + TCNT1;
     TCNT1 = 0;
     countTimer1 = 0;
     return velocity;
@@ -42,9 +42,24 @@ double getAngleMinute()   {   return angleMinute;   }
 double getAngleHour()   {   return angleHour;   }
 void setAngle(double ang)   {   angle = ang;    }
 
-unsigned int getHours() {  return hours;   }
-unsigned int getMinutes() {  return minutes; }
-unsigned int getSeconds()    {   return seconds; }
+
+unsigned long int getHours() 
+{  
+    hours = (countTimer0 / (nbCycleTimer0 * 60 * 12) ) % 60;
+    return hours;   
+}
+
+unsigned long int getMinutes() 
+{  
+    minutes = (countTimer0 / (nbCycleTimer0 * 60) ) % 60;
+    return minutes; 
+}
+
+unsigned long int getSeconds()    
+{   
+    seconds = (countTimer0 / nbCycleTimer0) % 60;
+    return seconds; 
+}
 
 ISR(TIMER0_OVF_vect)
 {
@@ -53,29 +68,8 @@ ISR(TIMER0_OVF_vect)
     else
     {
         countTimer0 = countTimer0 + 1;
-        if(countTimer0 == nbCycleTimer0)
-        {
+        if(countTimer0 == nbCycleTimer0 * 3600 * 12)
             countTimer0 = 0;
-            seconds = seconds + 1;
-            if(seconds == 60)
-            {
-                seconds = 0;
-                minutes = minutes + 1;
-                angleMinute = angleMinute + 2 * M_PI / 60;
-                if (minutes == 60)
-                {
-                    angleMinute = 0;
-                    minutes = 0;
-                    hours = hours + 1;
-                    angleHour = angleHour + 2 * M_PI / 12;
-                    if (hours == 24)
-                    {
-                        angleHour = 0;
-                        hours = 0;
-                    }
-                }
-            }
-        }
     }  
 }
 
