@@ -2,40 +2,43 @@
 #include <avr/io.h>
 #include <util/delay.h>
 
+using namespace pov;
+
 int main()
 {
-    SPI_init();
+  led_spi::init();
     
-    while(1) {
-        SPI_Set_ALL_Leds_UP();
-        SPI_MasterTransmit();
-        _delay_ms(500);
+  while(1) {
+    using namespace led_spi;
+    setAllLedsUp();
+    masterTransmit();
+    _delay_ms(500);
 
-        SPI_Set_ALL_Leds_DOWN();
-        SPI_MasterTransmit();
-        _delay_ms(500);
+    setAllLedsDown();
+    masterTransmit();
+    _delay_ms(500);
 
-        // enable individual led
-        SPI_Set_Led_UP(15);
-        SPI_Set_Led_UP(0);
-        SPI_MasterTransmit();
-        _delay_ms(500);
+    // enable individual led
+    setLedUp(15);
+    setLedUp(0);
+    masterTransmit();
+    _delay_ms(500);
 
-        // disable individual led
-        SPI_Set_Led_DOWN(15);
-        SPI_Set_Led_DOWN(0);
-        SPI_MasterTransmit();
-        _delay_ms(500);
+    // disable individual led
+    setLedDown(15);
+    setLedDown(0);
+    masterTransmit();
+    _delay_ms(500);
 
-        // enable selected led and disable others
-        leds_state = 1 << 2 | 1 << 3 | 1 << 5 | 1 << 6 ;
-        SPI_MasterTransmit();
-        _delay_ms(500);
+    // enable selected led and disable others
+    leds_state = 1 << 2 | 1 << 3 | 1 << 5 | 1 << 6 ;
+    masterTransmit();
+    _delay_ms(500);
 
-        // turn off all leds
-        leds_state = 0;
-        SPI_MasterTransmit();
-        _delay_ms(2000);
-    }
-    return 0;
+    // turn off all leds
+    leds_state = 0;
+    masterTransmit();
+    _delay_ms(2000);
+  }
+  return 0;
 }

@@ -1,16 +1,52 @@
-# pragma once
+#pragma once
 
-#define BAUD 38400
-#define MYUBRR F_CPU/16/BAUD-1
+#include <stdint.h>
+/**
+ * @namespace common::serial
+ * Implementation of the USART0 serial driver.
+ * @see atmega328p.pdf p143-165
+ */
+namespace pov::serial {
+  enum class Mode : char {
+      ASYNCHRONOUS_NORMAL,
+      ASYNCHRONOUS_DOUBLE_SPEED,
+      SYNCHRONOUS_MASTER,
+  };
 
-void USART_Init(unsigned int ubrr);
+  struct Config {
+     long int BAUD_RATE;
+     long int BAUD_RATE_TOL;
+     Mode MODE;
+  };
 
-void USART_Transmit(unsigned char data);
-void USART_Transmit_String(const char* s);
+  void init();
+  void transmit(char data);
+  void transmit(const char *s);
 
-int USART_Receive(unsigned char* c);
-int USART_Receive_String(unsigned char* buffer, unsigned int len, unsigned int timeout);
-int USART_Available(unsigned char* buffer, unsigned int len);
+  uint8_t receive();
+//  int receive(unsigned char* buffer, unsigned int len);
+  bool dataAvailable();
 
-/* #include <stdarg.h> */
-/* void USART_Transmit_String(unsigned char* s, ...); */
+
+namespace internal {
+  /**
+   * @brief calculateUBRR
+   * @see atmega328p.pdf p146,163
+   */
+  consteval unsigned int calculateUBRR(unsigned int baud, Mode mode = Mode::ASYNCHRONOUS_NORMAL) {
+    unsigned int ubrr = 1 << 12; // invalid UBRR;
+    switch (mode) {
+    case Mode::ASYNCHRONOUS_NORMAL:
+        ubrr = (unsigned int)(F_CPU/16/baud) - 1;
+        break;
+    case Mode::ASYNCHRONOUS_DOUBLE_SPEED:
+        ubrr = (unsigned int)(F_CPU/8/baud) - 1;
+        break;
+    case Mode::SYNCHRONOUS_MASTER:
+        ubrr = (unsigned int)(F_CPU/2/baud) - 1;
+        break;
+    }
+    return ubrr;
+  }
+}
+}

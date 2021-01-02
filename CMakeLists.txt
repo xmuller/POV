@@ -3,7 +3,7 @@ set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/cmake/avr.toolchain.cmake"
 
 project(POV)
 
-add_library(common-pov
+add_library(common-pov STATIC
   src/common/encoder.cpp
   src/common/led_spi.cpp
   src/common/serial.cpp

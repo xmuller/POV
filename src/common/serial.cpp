@@ -2,45 +2,57 @@
 
 #include <avr/io.h>
 #include <util/delay.h>
+#include "config.h"
 
-void USART_Init(unsigned int ubrr){
-  /*Set baud rate */
-  UBRR0H = (unsigned char)(ubrr>>8);
-  UBRR0L = (unsigned char)ubrr;
+namespace pov::serial
+{
+  void init(){
+    constexpr unsigned int ubrr = internal::calculateUBRR(config.BAUD_RATE, config.MODE);
+    static_assert (ubrr < 4096 && ubrr >= 0,
+                    "ERROR UBRR overflow, its value must be less than 4096, please check your baud rate.");
 
-  // U2X0
-  UCSR0A &= ~(1<<U2X0);
+    /*Set baud rate */
+    UBRR0H = (unsigned char)(ubrr>>8);
+    UBRR0L = (unsigned char)ubrr;
 
-  /* Enable receiver and transmitter */
-  // Alternate Function (AF)
-  UCSR0B = (1<<RXEN0)|(1<<TXEN0);
+    // U2X0
+    UCSR0A = UCSR0A & static_cast<uint8_t>(~(1<<U2X0));
 
-  /* Set frame format: 8data, 2stop bit */
-  UCSR0C = (1<<USBS0)|(3<<UCSZ00);
-}
+    /* Enable receiver and transmitter */
+    // Alternate Function (AF)
+    UCSR0B = (1<<RXEN0)|(1<<TXEN0);
 
-void USART_Transmit(unsigned char data){
-  /* Wait for empty transmit buffer */
-  while (!(UCSR0A & (1<<UDRE0)));
-
-  /* Put data into buffer, sends the data */
-  UDR0 = data;
-}
-
-void USART_Transmit_String(const char *s){
-  while( *s != '\0') {
-    USART_Transmit(*s);
-    s++;
+    /* Set frame format: 8data, 2stop bit */
+    UCSR0C = (1<<USBS0)|(3<<UCSZ00);
   }
-}
 
-/* void USART_Transmit_String(unsigned char* s, ...){ */
-/*   while( *s != '\0') { */
-/*     USART_Transmit(*s); */
-/*     s++; */
-/*   } */
-/* } */
+  void transmit(char data){
+    /* Wait for empty transmit buffer */
+    while (!(UCSR0A & (1<<UDRE0)));
 
-int USART_Receive_String(unsigned char* buffer, unsigned int len) {
+    /* Put data into buffer, sends the data */
+    UDR0 = (uint8_t)data;
+  }
 
+  void transmit(const char* s){
+    while( *s != '\0') {
+      transmit(*s);
+      s++;
+    }
+  }
+
+  uint8_t receive()
+  {
+    /* Wait for data to be received */
+    while (!dataAvailable())
+    {}
+
+    /* Get and return received data from buffer */
+    return UDR0;
+  }
+
+  bool dataAvailable()
+  {
+    return UCSR0A & ( 1 << RXC0);
+  }
 }

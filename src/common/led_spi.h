@@ -1,23 +1,28 @@
 #pragma once
 
-extern unsigned short leds_state;
+#include <stdint.h>
 
-void SPI_init();
-void SPI_MasterTransmit();
+namespace pov::led_spi {
+  struct Config {
+    unsigned short INITIAL_LEDS_STATE;
+  };
 
-void SPI_Set_Led_UP(char id);
-void SPI_Set_Led_DOWN(char id);
+  extern constinit unsigned short leds_state;
+  extern constinit unsigned int vitesse;
 
-void SPI_Set_ALL_Leds_UP();
-void SPI_Set_ALL_Leds_DOWN();
+  void init();
 
-void setBigNeedle();
-void setLittleNeedle();
+  void setLedUp(uint8_t id);
+  void setLedDown(uint8_t id);
 
-//inline void SPI_Disable_Led() {
+  void setAllLedsUp();
+  void setAllLedsDown();
 
-//    PORTC |= (1 << PC1);
-//}
-//inline void SPI_Enable_Led() {
-//    PORTC |= (1 << PC1);
-//}
+  void masterTransmit();
+
+  void setBigNeedle();
+  void setLittleNeedle();
+
+  inline unsigned char internalLedsStatus();
+  inline unsigned char externalLedsStatus();
+}

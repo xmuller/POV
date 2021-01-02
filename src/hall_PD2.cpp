@@ -7,16 +7,17 @@
 #include "common/timer.h"
 #include "common/encoder.h"
 
+using namespace pov;
 
 int main()
 {
-  SPI_init();
-  USART_Init(MYUBRR);
+  led_spi::init();
+  serial::init();
   sei(); 
   
   while (1) {   
-    USART_Transmit_String("no");
-    EIMSK |= (1 << INT0);
+    serial::transmit("no");
+    EIMSK = EIMSK | (1 << INT0); // enable external interruption
     _delay_ms(1000);
     //PCMSK0  |= (1 << PCINT0);
   }

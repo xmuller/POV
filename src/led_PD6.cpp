@@ -6,17 +6,18 @@
 #include "common/timer.h"
 #include "common/encoder.h"
 
+using namespace pov;
+
 int main()
 {
-
-  USART_Init(MYUBRR);
-  DDRD |= _BV(PD6);
+  serial::init();
+  DDRD = DDRD | _BV(PD6);
   while (1) {
 
-    PORTD |= _BV(PD6);
+    PORTD = PORTD | _BV(PD6);
     _delay_ms(500);
 
-    PORTD &= ~_BV(PD6);
+    PORTD = PORTD & (uint8_t)(~_BV(PD6));
     _delay_ms(500);
 
   }

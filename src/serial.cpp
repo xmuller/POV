@@ -2,13 +2,14 @@
 #include <util/delay.h>
 
 #include "common/serial.h"
+using namespace pov;
 
 int main() {
-  USART_Init(MYUBRR);
+  serial::init();
 
   while (1) {
-    USART_Transmit('x');
-    USART_Transmit_String("Coucou");
+    serial::transmit('x');
+    serial::transmit("Coucou");
     _delay_ms(1000);
   }
   return 0;

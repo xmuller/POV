@@ -1,26 +1,29 @@
 #include <avr/io.h>
+#include <avr/interrupt.h>
 #include <stdio.h>
 #include <util/delay.h>
 
 #include "common/serial.h"
 #include "common/timer.h"
 
+using namespace pov;
+using namespace pov::serial;
 
 int main()
 {
-    USART_Init(MYUBRR);
-    init_timer();
-
+    sei();
+    serial::init();
+    timer::init();
+    char buf[16];
     while (1)
     {
-        char buf[16];
-        sprintf(buf, "seconds %d\n", getSeconds());
-        USART_Transmit_String(buf);
-        sprintf(buf, "minutes %d\n", getMinutes());
-        USART_Transmit_String(buf);
-        sprintf(buf, "hours %d\n", getHours());
-        USART_Transmit_String(buf);
-        _delay_ms(1000);
+      sprintf(buf, "seconds %d\n", timer::getSeconds());
+      transmit(buf);
+      sprintf(buf, "minutes %d\n", timer::getMinutes());
+      transmit(buf);
+      sprintf(buf, "hours %d\n", timer::getHours());
+      transmit(buf);
+      _delay_ms(1000);
     }
     return 0;
 }

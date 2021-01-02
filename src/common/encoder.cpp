@@ -9,13 +9,15 @@
 #include "timer.h"
 #include "led_spi.h"
 
-unsigned int velocity = 0;
+
+namespace pov::encoder
+{
 
 ISR(INT0_vect) //Sans interruption, pour lire c'est (PIND & _BV(PD2))
 {
-    setAngle(0);
-    velocity = getVelocityAndReset();
-    EIMSK &= (0 << INT0);
+    timer::setAngle(0);
+    velocity = timer::getVelocityAndReset();
+    EIMSK = EIMSK & (0 << INT0);
 }
 
 unsigned int getVelocity()
@@ -25,4 +27,5 @@ unsigned int getVelocity()
 
 int getHallSensor(){
     return (PIND & _BV(PD2));
+}
 }
