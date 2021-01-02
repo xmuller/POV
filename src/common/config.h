@@ -23,7 +23,7 @@ constexpr Config<2> config {
     },
     {
       .TIMER_ID = TimerIdentifiers::TIMER_1_16_BIT,
-      .CONTROL_FLAGS = ControlFlags::PRESCALED_256,
+      .CONTROL_FLAGS = ControlFlags::PRESCALED_64,
       .ENABLED_INTERRUPTION_FLAGS = InterruptFlags::INTERRUPT_OVERFLOW
     },
   }

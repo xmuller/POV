@@ -73,7 +73,7 @@ namespace pov::led_spi
     {
       setLedUp(i);
       masterTransmit();
-      _delay_us(encoder::velocity);
+      _delay_us((double)encoder::time_per_round);
       setLedDown(i);
       masterTransmit();
     }
@@ -85,7 +85,7 @@ namespace pov::led_spi
     {
       setLedUp(i);
       masterTransmit();
-      _delay_us(encoder::velocity);
+      _delay_us((double)encoder::time_per_round);
       setLedDown(i);
       masterTransmit();
     }

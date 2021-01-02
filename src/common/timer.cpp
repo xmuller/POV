@@ -12,6 +12,28 @@
 
 namespace pov::timer
 {
+
+template<uint8_t TIMER_ID>
+consteval uint16_t calculateTimerTicksPerSec() {
+  static_assert (TIMER_ID < NB_MAX_TIMERS, "Exceed maximum timers identifier.");
+  uint16_t timer_register_max_value = 255;
+  uint16_t prescaler_value = 0;
+  if constexpr (TIMER_ID == 1) {
+      timer_register_max_value = 0b1111111111111111;
+  }
+  if constexpr (config[TIMER_ID].CONTROL_FLAGS == ControlFlags::PRESCALED_8)
+    prescaler_value = (1 << 3);
+  else if constexpr (config[TIMER_ID].CONTROL_FLAGS == ControlFlags::PRESCALED_64)
+    prescaler_value = (1 << 6);
+  else if constexpr (config[TIMER_ID].CONTROL_FLAGS == ControlFlags::PRESCALED_256)
+    prescaler_value = (1 << 8);
+  else if constexpr (config[TIMER_ID].CONTROL_FLAGS == ControlFlags::PRESCALED_1024)
+    prescaler_value = (1 << 10);
+
+  return (uint16_t)(F_CPU / prescaler_value / timer_register_max_value);
+}
+
+
 template<int N>
 void configAllTimers() {
   setControlFlags<config[N-1].TIMER_ID>(config[N-1].CONTROL_FLAGS);
@@ -23,18 +45,6 @@ void configAllTimers() {
 
 void init() {
   configAllTimers<config.NB_TIMER_USED>();
-
-  etallonnage = true;
-  _delay_ms(1000);
-  etallonnage = false;
-}
-
-unsigned int getVelocityAndReset()  //À appeler chaque fois que l'on passe sur l'aimant
-{
-    unsigned int velocity = (1 << 12)  + TCNT1;
-    TCNT1 = 0;
-    countTimer1 = 0;
-    return velocity;
 }
 
 double getAngle()   {   return angle;   }
@@ -43,39 +53,35 @@ double getAngleHour()   {   return angleHour;   }
 void setAngle(double ang)   {   angle = ang;    }
 
 
-unsigned long int getHours() 
+uint8_t getHours()
 {  
-    hours = (countTimer0 / (nbCycleTimer0 * 60 * 12) ) % 60;
-    return hours;   
+  return (uint8_t)(tickCounters[0] / (calculateTimerTicksPerSec<0>() * 60 * 12)) % 60;
 }
 
-unsigned long int getMinutes() 
+uint8_t getMinutes()
 {  
-    minutes = (countTimer0 / (nbCycleTimer0 * 60) ) % 60;
-    return minutes; 
+  return (uint8_t)(tickCounters[0] / (calculateTimerTicksPerSec<0>() * 60)) % 60;
 }
 
-unsigned long int getSeconds()    
+uint8_t getSeconds()
 {   
-    seconds = (countTimer0 / nbCycleTimer0) % 60;
-    return seconds; 
+  return (uint8_t)(tickCounters[0] / calculateTimerTicksPerSec<0>()) % 60;
 }
 
 ISR(TIMER0_OVF_vect)
 {
-    if(etallonnage == true)
-        nbCycleTimer0 = nbCycleTimer0 + 1;
-    else
-    {
-        countTimer0 = countTimer0 + 1;
-        if(countTimer0 == nbCycleTimer0 * 3600 * 12)
-            countTimer0 = 0;
-    }  
+  tickCounters[0] = tickCounters[0] + 1;
+  if(tickCounters[0] == calculateTimerTicksPerSec<0>() * 3600 * 12)
+    tickCounters[0] = 0;
+
+
+
 }
 
 ISR(TIMER1_OVF_vect)
 {
-    countTimer1 = countTimer1 + 1;
+  serial::transmit("Error: Timer1 shouldn't overflow ! (reset by encoder");
+//    countTimer1 = countTimer1 + ( 1 << 15);
 }
 
 }

@@ -10,6 +10,31 @@
 
 using namespace pov;
 
+namespace settings {
+static constexpr uint16_t RADIUS_MICRO_METER = 0.09e4;
+static constexpr uint16_t PIx2 = 3.1415e4 * 2;
+}
+
+/**
+ * 1. On récupe la position courante
+ * 2. On regarde l'état théorique de la led par rapport à la position
+ * 3. On update selon cet état
+ */
+using namespace settings;
+//char buf[50];
+
+/**
+ * @brief updatePovPosition
+ *
+ * Timer1 is reset each turn so we estimate the current position based on the time to realise
+ * a turn and the current time.
+ */
+inline void updatePovPosition() {
+  auto time_distance_from_origine = timer::getCurrentTime<1>();
+  uint32_t speed = RADIUS_MICRO_METER * PIx2 / encoder::time_per_round;
+  encoder::current_pov_position = time_distance_from_origine * speed;
+}
+
 int main()
 {
     led_spi::init();
@@ -17,14 +42,25 @@ int main()
     timer::init();
     encoder::init();
     sei();
-    char buf[16];
+
+//    auto time_per_round = 0;
     while (1)
     {
-        _delay_ms(100);
-        sprintf(buf, "velocity %u\n", encoder::velocity);
-        serial::transmit(buf);
-        //SPI_Set_ALL_Leds_DOWN();
-        //SPI_MasterTransmit();
+        updatePovPosition();
+        if (encoder::current_pov_position > 0 && encoder::current_pov_position < 100 )
+          led_spi::setAllLedsUp();
+        else
+          led_spi::setAllLedsDown();
+        led_spi::masterTransmit();
+
+
+//        sprintf(buf, "position %lu\n", encoder::current_pov_position);
+
+//        _delay_us(500);
+
+//        auto diff = time() - last_time;
+
+//        serial::transmit(buf);
         //setBigNeedle();
     }
     return 0;

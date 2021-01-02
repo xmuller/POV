@@ -7,31 +7,38 @@ namespace pov::timer
 {
 constexpr uint8_t NB_MAX_TIMERS = 3;
 
-inline volatile bool etallonnage     = false;
-
-inline volatile unsigned long int seconds = 0;
-inline volatile unsigned long int minutes = 0;
-inline volatile unsigned long int hours   = 0;
+inline constinit volatile uint8_t seconds = 0;
+inline constinit volatile uint8_t minutes = 0;
+inline constinit volatile uint8_t hours   = 0;
 
 inline volatile double angle = 0;
 inline volatile double angleHour = 0;
 inline volatile double angleMinute = 0;
 
-inline volatile unsigned long int countTimer0 = 0;        //Nombre de cycle en cours sur le timer0
-inline volatile unsigned long int nbCycleTimer0 = 0;     //Nombre de cycle nécessaire pour faire 1s
-inline volatile unsigned long int countTimer1 = 0;        //Nombre de cycle en cours sur le timer1
+inline volatile uint32_t tickCounters[NB_MAX_TIMERS];
 
-// ↓↓↓↓↓ TO REMOVE → replace with direct acess
-unsigned long int getHours();
-unsigned long int getMinutes();
-unsigned long int getSeconds();
+//inline volatile unsigned long int countTimer0 = 0;        //Nombre de cycle en cours sur le timer0
+//inline volatile unsigned long int nbCycleTimer0 = 0;     //Nombre de cycle nécessaire pour faire 1s
+//inline volatile unsigned long int countTimer1 = 0;        //Nombre de cycle en cours sur le timer1
+
+
+template<uint8_t TIMER_ID>
+inline unsigned long getCurrentTime() {
+  static_assert (TIMER_ID < NB_MAX_TIMERS, "Exceed maximum timers identifier."); \
+  if constexpr (TIMER_ID == 1)
+    return TCNT1 + timer::tickCounters[TIMER_ID];
+  if constexpr (TIMER_ID == 0)
+    return TCNT0 + timer::tickCounters[TIMER_ID];
+}
+
+uint8_t getHours();
+uint8_t getMinutes();
+uint8_t getSeconds();
 
 double getAngle();
 double getAngleMinute();
 double getAngleHour();
 void setAngle(double ang);
-
-unsigned int getVelocityAndReset();
 
 /**
  * @brief init system_clock
@@ -80,7 +87,7 @@ enum ControlFlags : uint16_t {
 
 struct TimerConfig {
   TimerIdentifiers TIMER_ID;
-  uint8_t CONTROL_FLAGS;
+  uint16_t CONTROL_FLAGS;
   uint8_t ENABLED_INTERRUPTION_FLAGS;
 };
 
@@ -120,5 +127,4 @@ inline constexpr void setControlFlags(uint16_t flags) {
   setControlFlagsB<TIMER_ID>(static_cast<uint8_t>(flags >> 0));
 }
 #undef setterRegister
-
 }
