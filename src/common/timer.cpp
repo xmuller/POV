@@ -12,6 +12,9 @@
 
 namespace pov::timer
 {
+#define strcat_(x, y) x ## y
+#define strcat(x, y) strcat_(x, y)
+#define PRINT_CONSTEXPR(x) template <auto> struct strcat(strcat(value_of_, x), _is); static_assert(strcat(strcat(value_of_, x), _is)<x>::x, "");
 
 template<uint8_t TIMER_ID>
 consteval uint16_t calculateTimerTicksPerSec() {
@@ -33,7 +36,6 @@ consteval uint16_t calculateTimerTicksPerSec() {
   return (uint16_t)(F_CPU / prescaler_value / timer_register_max_value);
 }
 
-
 template<int N>
 void configAllTimers() {
   setControlFlags<config[N-1].TIMER_ID>(config[N-1].CONTROL_FLAGS);
@@ -52,35 +54,44 @@ double getAngleMinute()   {   return angleMinute;   }
 double getAngleHour()   {   return angleHour;   }
 void setAngle(double ang)   {   angle = ang;    }
 
-
 uint8_t getHours()
-{  
-  return (uint8_t)(tickCounters[0] / (calculateTimerTicksPerSec<0>() * 60 * 12)) % 60;
+{
+//    return (overflowCounter0 / (nbCycleTimer0 * 60 * 12) ) % 12;
+    return (uint8_t)(overflowCounter0 / (calculateTimerTicksPerSec<0>()) / 3600) % 12;
 }
 
 uint8_t getMinutes()
-{  
-  return (uint8_t)(tickCounters[0] / (calculateTimerTicksPerSec<0>() * 60)) % 60;
+{
+//    return (uint16_t)(overflowCounter0 / (nbCycleTimer0 * 60) ) % 60;
+    return (uint8_t)(overflowCounter0 / (calculateTimerTicksPerSec<0>()* 60) ) % 60;
 }
 
 uint8_t getSeconds()
-{   
-  return (uint8_t)(tickCounters[0] / calculateTimerTicksPerSec<0>()) % 60;
+{
+//    return (uint16_t)(overflowCounter0 / nbCycleTimer0) % 60;
+    return (uint8_t)(overflowCounter0 / calculateTimerTicksPerSec<0>() )% 60;
 }
 
 ISR(TIMER0_OVF_vect)
 {
-  tickCounters[0] = tickCounters[0] + 1;
-  if(tickCounters[0] == calculateTimerTicksPerSec<0>() * 3600 * 12)
-    tickCounters[0] = 0;
+  // temps_max_overflow = 255 / calculateTimerTicksPerSec<0>();
+  // temps_max_overflow = 255 / calculateTimerTicksPerSec<0>();
+//  if (etallo)
+//    nbCycleTimer0 = nbCycleTimer0 + 1;
+//  else {
+    overflowCounter0 = overflowCounter0 + 1;
+//    if(overflowCounter0 == calculateTimerTicksPerSec<0>()* 3600 * 12)
+//      overflowCounter0 = 0;
+//  }
 
-
-
+//  tickCounters[0] = tickCounters[0] + 255;
+//  if(tickCounters[0] == calculateTimerTicksPerSec<0>() * 3600 * 12)
+//    tickCounters[0] = 0;
 }
 
 ISR(TIMER1_OVF_vect)
 {
-  serial::transmit("Error: Timer1 shouldn't overflow ! (reset by encoder");
+  serial::transmit("Error: Timer1 shouldn't overflow ! (reset by encoder)\n");
 //    countTimer1 = countTimer1 + ( 1 << 15);
 }
 

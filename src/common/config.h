@@ -6,9 +6,13 @@
 
 namespace pov
 {
+constexpr uint16_t RADIUS_MICRO_METER = 0.09e4;
+constexpr uint16_t PIx2 = 3.1415e4 * 2;
+
 namespace led_spi {
 constexpr Config config  {
-  .INITIAL_LEDS_STATE = 0b1111111111111111
+//  .INITIAL_LEDS_STATE =   0b0101010101010101
+  .INITIAL_LEDS_STATE = 0b1
 };
 }
 

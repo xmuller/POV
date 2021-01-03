@@ -4,11 +4,10 @@
 
 namespace pov::led_spi {
   struct Config {
-    unsigned short INITIAL_LEDS_STATE;
+    uint16_t INITIAL_LEDS_STATE;
   };
 
-  extern constinit unsigned short leds_state;
-  extern constinit unsigned int vitesse;
+  extern uint16_t leds_state;
 
   void init();
 
@@ -23,6 +22,6 @@ namespace pov::led_spi {
   void setBigNeedle();
   void setLittleNeedle();
 
-  inline unsigned char internalLedsStatus();
-  inline unsigned char externalLedsStatus();
+  inline uint8_t internalLedsStatus();
+  inline uint8_t externalLedsStatus();
 }

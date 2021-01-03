@@ -3,13 +3,13 @@
 
 #include <avr/io.h>
 #include <util/delay.h>
+#include <avr/interrupt.h>
 
 #include "config.h"
 
 namespace pov::led_spi
 {
-  constinit unsigned short leds_state = config.INITIAL_LEDS_STATE;
-  constinit unsigned int vitesse = config.INITIAL_LEDS_STATE;
+  uint16_t leds_state = config.INITIAL_LEDS_STATE;
 
   void init()
   {
@@ -18,18 +18,23 @@ namespace pov::led_spi
 
     DDRC = DDRC | (1<<PC1) | (1<<PC2);        //Set latch and OE to 0
 
-    PORTC = PORTC & (0 << PC1) & (0 << PC2);
+    PORTC = PORTC & (0 << PC1) & (1 << PC2);
 
     /* Enable SPI, Master, set clock rate fck/16 */
-    SPCR = SPCR | (1<<SPE)|(1<<MSTR)|(1<<SPR0);
+    SPCR = SPCR | (1<<SPE) | (1<<MSTR);
+
+//    SPCR = SPCR | (0<<SPI2X) | (1 << SPR1) | (1 << SPR0);
+    SPCR = SPCR | (0 << SPR1) | (1 << SPR0);
+
+    SPSR = SPSR | (1 << SPI2X);
   }
 
   void setLedUp(uint8_t id) {
-    leds_state |= (1 << id);
+    leds_state = leds_state | (uint16_t)(1 << id);
   }
 
   void setLedDown(uint8_t id) {
-    leds_state &= (0 << id);
+    leds_state =  leds_state &  (uint16_t)(0 << id);
   }
 
   void masterTransmit()
@@ -46,7 +51,9 @@ namespace pov::led_spi
     while(!(SPSR & (1<<SPIF)));
 
     PORTC = PORTC | (1 << PC2);    // enable latch
-    PORTC = PORTC | (0 << PC2);    // disable latch (time to write > time to flush)
+    PORTC = PORTC & (0 << PC2);    // disable latch (time to write > time to flush)
+
+//    _delay_us(12)
   }
 
   void setAllLedsUp() {
@@ -57,12 +64,12 @@ namespace pov::led_spi
     leds_state = 0;
   }
 
-  unsigned char internalLedsStatus()
+  uint8_t internalLedsStatus()
   {
      return static_cast<uint8_t>(leds_state >> 0);
   }
 
-  unsigned char externalLedsStatus()
+  uint8_t externalLedsStatus()
   {
      return static_cast<uint8_t>(leds_state >> 8);
   }

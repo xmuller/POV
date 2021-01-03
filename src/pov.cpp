@@ -10,18 +10,12 @@
 
 using namespace pov;
 
-namespace settings {
-static constexpr uint16_t RADIUS_MICRO_METER = 0.09e4;
-static constexpr uint16_t PIx2 = 3.1415e4 * 2;
-}
-
 /**
  * 1. On récupe la position courante
  * 2. On regarde l'état théorique de la led par rapport à la position
  * 3. On update selon cet état
  */
-using namespace settings;
-//char buf[50];
+char buf[50];
 
 /**
  * @brief updatePovPosition
@@ -30,33 +24,63 @@ using namespace settings;
  * a turn and the current time.
  */
 inline void updatePovPosition() {
-  auto time_distance_from_origine = timer::getCurrentTime<1>();
-  uint32_t speed = RADIUS_MICRO_METER * PIx2 / encoder::time_per_round;
-  encoder::current_pov_position = time_distance_from_origine * speed;
+  encoder::current_pov_position = timer::getCurrentTime<1>() * encoder::current_pov_speed;
 }
 
 int main()
 {
+    sei();
     led_spi::init();
     serial::init();
     timer::init();
     encoder::init();
-    sei();
+
+//    led_spi::setAllLedsDown();
+    led_spi::masterTransmit();
+
 
 //    auto time_per_round = 0;
     while (1)
     {
-        updatePovPosition();
-        if (encoder::current_pov_position > 0 && encoder::current_pov_position < 100 )
-          led_spi::setAllLedsUp();
-        else
+        uint16_t time_hours_activation = encoder::time_per_round - encoder::time_per_round / 12 * (timer::getHours() + 1);
+        uint16_t time_minutes_activation = encoder::time_per_round - encoder::time_per_round / 60 * (timer::getMinutes() + 15);
+        uint16_t time_secondes_activation = encoder::time_per_round - encoder::time_per_round / 60 * timer::getSeconds();
+        auto current_time = timer::getCurrentTime<1>();
+        bool activate_hours =  current_time > time_hours_activation - 40 && current_time < time_hours_activation + 40;
+        bool activate_min = current_time > time_minutes_activation - 20 && current_time < time_minutes_activation + 20;
+        bool activate_sec = current_time > time_secondes_activation - 10 && current_time < time_secondes_activation + 10;
+
+
+
+        uint16_t time_sec_bis_activation = (current_time > encoder::time_per_round/2) ? (time_secondes_activation + encoder::time_per_round/2)
+                                                                                      : (time_secondes_activation - encoder::time_per_round/2);
+        bool activate_sec_bis = current_time >  time_sec_bis_activation - 10 && current_time < time_sec_bis_activation + 10;
+        if (activate_min || activate_hours || activate_sec || activate_sec_bis) {
+//        if (false) {
+          if (activate_hours)
+            led_spi::leds_state = 0b1111111111;
+          if (activate_min)
+            led_spi::leds_state = 0b1111111111111;
+          if (activate_sec)
+            led_spi::leds_state = 0b1111111111111;
+          if (activate_sec_bis)
+            led_spi::leds_state = 0b11111;
+        }
+        else {
           led_spi::setAllLedsDown();
+        }
+        led_spi::setLedUp(15);
+//        led_spi::setAllLedsDown();
         led_spi::masterTransmit();
 
+//        _delay_ms(1);
+//        led_spi::setLedUp(15);// = led_spi::leds_state | (1 << 2);
 
-//        sprintf(buf, "position %lu\n", encoder::current_pov_position);
+//        led_spi::masterTransmit();
 
-//        _delay_us(500);
+//        sprintf(buf, "position %hu\n", time_hours_activation);
+
+//        _delay_ms(1);
 
 //        auto diff = time() - last_time;
 

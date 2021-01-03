@@ -17,11 +17,11 @@ int main()
     char buf[16];
     while (1)
     {
-      sprintf(buf, "seconds %hhu\n", timer::getSeconds());
+      sprintf(buf, "seconds %hu\n", timer::getSeconds());
       transmit(buf);
-      sprintf(buf, "minutes %hhu\n", timer::getMinutes());
+      sprintf(buf, "minutes %hu\n", timer::getMinutes());
       transmit(buf);
-      sprintf(buf, "hours %hhu\n", timer::getHours());
+      sprintf(buf, "hours %hu\n", timer::getHours());
       transmit(buf);
       _delay_ms(1000);
     }

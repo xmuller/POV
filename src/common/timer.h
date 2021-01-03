@@ -7,28 +7,21 @@ namespace pov::timer
 {
 constexpr uint8_t NB_MAX_TIMERS = 3;
 
-inline constinit volatile uint8_t seconds = 0;
-inline constinit volatile uint8_t minutes = 0;
-inline constinit volatile uint8_t hours   = 0;
-
 inline volatile double angle = 0;
 inline volatile double angleHour = 0;
 inline volatile double angleMinute = 0;
 
 inline volatile uint32_t tickCounters[NB_MAX_TIMERS];
 
-//inline volatile unsigned long int countTimer0 = 0;        //Nombre de cycle en cours sur le timer0
-//inline volatile unsigned long int nbCycleTimer0 = 0;     //Nombre de cycle nécessaire pour faire 1s
-//inline volatile unsigned long int countTimer1 = 0;        //Nombre de cycle en cours sur le timer1
-
+inline volatile uint16_t overflowCounter0 = 0;        //Nombre de cycle en cours sur le timer0
 
 template<uint8_t TIMER_ID>
-inline unsigned long getCurrentTime() {
+inline uint16_t getCurrentTime() {
   static_assert (TIMER_ID < NB_MAX_TIMERS, "Exceed maximum timers identifier."); \
   if constexpr (TIMER_ID == 1)
-    return TCNT1 + timer::tickCounters[TIMER_ID];
+    return (TCNT1);
   if constexpr (TIMER_ID == 0)
-    return TCNT0 + timer::tickCounters[TIMER_ID];
+    return TCNT0;
 }
 
 uint8_t getHours();
