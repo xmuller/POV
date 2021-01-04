@@ -23,7 +23,6 @@ namespace pov::led_spi
     /* Enable SPI, Master, set clock rate fck/16 */
     SPCR = SPCR | (1<<SPE) | (1<<MSTR);
 
-//    SPCR = SPCR | (0<<SPI2X) | (1 << SPR1) | (1 << SPR0);
     SPCR = SPCR | (0 << SPR1) | (1 << SPR0);
 
     SPSR = SPSR | (1 << SPI2X);
@@ -52,8 +51,6 @@ namespace pov::led_spi
 
     PORTC = PORTC | (1 << PC2);    // enable latch
     PORTC = PORTC & (0 << PC2);    // disable latch (time to write > time to flush)
-
-//    _delay_us(12)
   }
 
   void setAllLedsUp() {
@@ -72,29 +69,5 @@ namespace pov::led_spi
   uint8_t externalLedsStatus()
   {
      return static_cast<uint8_t>(leds_state >> 8);
-  }
-
-  void setBigNeedle()
-  {
-    for(uint8_t i = 0; i < 16; i++)
-    {
-      setLedUp(i);
-      masterTransmit();
-      _delay_us((double)encoder::time_per_round);
-      setLedDown(i);
-      masterTransmit();
-    }
-  }
-
-  void setLittleNeedle()
-  {
-    for(uint8_t i = 0; i < 10; i++)
-    {
-      setLedUp(i);
-      masterTransmit();
-      _delay_us((double)encoder::time_per_round);
-      setLedDown(i);
-      masterTransmit();
-    }
   }
 }

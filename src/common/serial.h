@@ -29,11 +29,9 @@ namespace pov::serial {
   void printf(const char* fmt, ...);
 
   char receive();
-//  int receive(unsigned char* buffer, unsigned int len);
   bool dataAvailable();
 
   inline RingBuffer<char, 100> io_buffer;
-
 
 namespace internal {
   /**

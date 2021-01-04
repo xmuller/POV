@@ -23,5 +23,4 @@ void shellTick();
 
 extern const ShellCommand shell_commands[];
 extern const ShellCommand shell_local_commands[];
-
 }

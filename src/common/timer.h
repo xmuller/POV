@@ -73,7 +73,6 @@ enum ControlFlags : uint16_t {
   WG_FAST_PWM                            = (0 << 3) | (1 << 9) | (1 << 8),
   WG_PWM_PHASE_CORRECT_CUSTOM_TOP        = (1 << 3) | (0 << 9) | (1 << 8),
   WG_FAST_CUSTOM_TOP                     = (1 << 3) | (1 << 9) | (1 << 8),
-// Compare Output Mode
 };
 
 struct TimerConfig {

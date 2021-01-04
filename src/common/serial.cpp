@@ -84,6 +84,5 @@ namespace pov::serial
       if ( c == '\n' )
         run_shell = true;
     }
-
   }
 }

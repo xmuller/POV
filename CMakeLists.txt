@@ -18,8 +18,3 @@ target_link_libraries(pov PUBLIC ATMEGA328P::CPP20_OPTIMIZED_BUILD)
 target_include_directories(pov PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/>
 )
-
-#foreach(BINARY_NAME  hall_PD2 led_PD6 pov serial test_spi test_timer shell)
-#  add_avr_executable(${BINARY_NAME} src/${BINARY_NAME}.cpp)
-#  target_link_libraries(${BINARY_NAME} PRIVATE common-pov)
-#endforeach()

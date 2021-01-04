@@ -23,10 +23,9 @@ ISR(INT0_vect)
 
 void init()
 {
-    EIMSK = (1 << INT0);
-    EICRA = (1 << ISC00) | (1 << ISC01);   //Génère une interruption à chaque fois que INT0 passe de 0 à 1
+  EIMSK = (1 << INT0);
+  EICRA = (1 << ISC00) | (1 << ISC01);   // external interrupt on falling edge
 }
-
 
 int getHallSensor(){
     return (PIND & _BV(PD2));

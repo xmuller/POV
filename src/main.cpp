@@ -11,13 +11,14 @@
 
 using namespace pov;
 
-constinit uint8_t current_mode = 0;
+uint8_t current_mode = 0;
+uint16_t main_loop_duration = 0;
 
 void povInfo(unsigned int, char* []) {
-  serial::printf("current mode       : %i\n"
-                 "pov speed RPM      : %i"
-                 "time (us) one turn : %i"
-                 "time main loop (us): %i", current_mode, 1000, 50000, 25550);
+  serial::printf("current mode       : %hu\n"
+                 "pov speed RPM      : %hu\n", current_mode, main_loop_duration);
+   serial::printf("time (us) one turn : %hu\n"
+                 "time main loop (us): %hu\n", main_loop_duration, main_loop_duration);
 }
 
 
@@ -29,7 +30,7 @@ void time(unsigned int argc, char* argv []) {
     timer::setHours((uint8_t)atoi(argv[0]));
     timer::setMinutes((uint8_t)atoi(argv[1]));
     timer::setSeconds((uint8_t)atoi(argv[2]));
-    serial::transmit("New ");
+    serial::transmit("NEW ");
   }
 
   serial::printf("Time: hour:%hu min:%hu sec:%hu\n",
@@ -104,16 +105,24 @@ void testSpi(unsigned int, char* []) {
   _delay_ms(500);
 }
 
+void mode(unsigned int argc, char* argv[]) {
+  if (argc == 1){
+    current_mode = (uint8_t)atoi(argv[0]);
+    serial::transmit("NEW ");
+  }
+    serial::printf("Mode value is: %i\n", current_mode);
+}
+
 const shell::ShellCommand shell::shell_commands[] = {
  {"pov_info", povInfo},
  {"time", time},
+ {"mode", mode},
  {"toggle_warn", toggleWarning},
  {"test_pd6", blinkPD6},
  {"test_spi", testSpi},
  {"test_hall", testHall },
  {nullptr, nullptr }
 };
-
 
 // Standard clock with needle
 void loopMode0() {
@@ -154,15 +163,15 @@ int main() {
 
   while (1)
   {
-    if(run_shell)
-      shell::shellTick();
-
+    main_loop_duration = timer::getCurrentTime<1>();
     if(current_mode == 0)
       loopMode0();
-
     if(current_mode == 4) // idle mode
-      _delay_ms(500);
-  }
+      _delay_ms(300);
+    main_loop_duration = timer::getCurrentTime<1>() - main_loop_duration;
 
+    if(run_shell)
+      shell::shellTick();
+  }
   return 0;
 }

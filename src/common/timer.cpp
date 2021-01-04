@@ -62,15 +62,11 @@ uint8_t getSeconds()
 
 void setHours(uint8_t value)
 {
-  setInterruptionFlags<0>(0 << 0);
   hours = value;
-  setInterruptionFlags<0>(1 << 0);
 }
 
 void setMinutes(uint8_t value) {
-  setInterruptionFlags<0>(0 << 0);
   minutes = value;
-  setInterruptionFlags<0>(1 << 0);
 }
 
 void setSeconds(uint8_t value) {

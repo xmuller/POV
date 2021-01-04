@@ -19,9 +19,6 @@ namespace pov::led_spi {
 
   void masterTransmit();
 
-  void setBigNeedle();
-  void setLittleNeedle();
-
   inline uint8_t internalLedsStatus();
   inline uint8_t externalLedsStatus();
 }

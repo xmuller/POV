@@ -76,30 +76,16 @@ if(NOT _ATMEGA328P_BUILD_SET)
   )
 
   function(add_avr_executable target_name)
-#message(STATUS "AVR TOOLCHAIN: add_avr_executable available options:\n\
-#  → GENERATE_BINARY\n\
-#  → GENERATE_FLASH_CMD\n\
-#    ")
     add_executable(${target_name} ${ARGN})
-#    set(options
-#       GENERATE_BINARY
-#       GENERATE_FLASH_CMD
-#     )
-#    cmake_parse_arguments(AVR_EXE_OPTIONS "" "${options}" "${multiValueArgs}" "${ARGN}")
-
-#  if(AVR_EXE_OPTIONS_GENERATE_BINARY)
     add_custom_command(
       TARGET ${target_name}
       POST_BUILD COMMAND
       ${CMAKE_OBJCOPY} -O binary $<TARGET_FILE_NAME:${target_name}> ${target_name}.bin
     )
-#  endif()
 
-#  if(AVR_EXE_OPTIONS_GENERATE_FLASH_CMD)
     add_custom_target(flash-${target_name}
       COMMAND avrdude -p m328p -c usbasp -U flash:w:${target_name}.bin
       DEPENDS ${target_name}
     )
-#  endif()
   endfunction()
 endif()
