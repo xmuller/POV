@@ -17,8 +17,8 @@ uint16_t main_loop_duration = 0;
 void povInfo(unsigned int, char* []) {
   serial::printf("current mode       : %hu\n"
                  "pov speed RPM      : %hu\n", current_mode, main_loop_duration);
-   serial::printf("time (us) one turn : %hu\n"
-                 "time main loop (us): %hu\n", main_loop_duration, main_loop_duration);
+  serial::printf("time (us) one turn : %hu\n"
+                 "time main loop (us): %hu\n", encoder::time_per_round, main_loop_duration);
 }
 
 
