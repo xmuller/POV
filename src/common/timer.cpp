@@ -12,10 +12,6 @@
 
 namespace pov::timer
 {
-#define strcat_(x, y) x ## y
-#define strcat(x, y) strcat_(x, y)
-#define PRINT_CONSTEXPR(x) template <auto> struct strcat(strcat(value_of_, x), _is); static_assert(strcat(strcat(value_of_, x), _is)<x>::x, "");
-
 template<uint8_t TIMER_ID>
 consteval uint16_t calculateTimerTicksPerSec() {
   static_assert (TIMER_ID < NB_MAX_TIMERS, "Exceed maximum timers identifier.");
@@ -49,50 +45,60 @@ void init() {
   configAllTimers<config.NB_TIMER_USED>();
 }
 
-double getAngle()   {   return angle;   }
-double getAngleMinute()   {   return angleMinute;   }
-double getAngleHour()   {   return angleHour;   }
-void setAngle(double ang)   {   angle = ang;    }
-
 uint8_t getHours()
 {
-//    return (overflowCounter0 / (nbCycleTimer0 * 60 * 12) ) % 12;
-    return (uint8_t)(overflowCounter0 / (calculateTimerTicksPerSec<0>()) / 3600) % 12;
+  return hours%12;
 }
 
 uint8_t getMinutes()
 {
-//    return (uint16_t)(overflowCounter0 / (nbCycleTimer0 * 60) ) % 60;
-    return (uint8_t)(overflowCounter0 / (calculateTimerTicksPerSec<0>()* 60) ) % 60;
+  return minutes;
 }
 
 uint8_t getSeconds()
 {
-//    return (uint16_t)(overflowCounter0 / nbCycleTimer0) % 60;
-    return (uint8_t)(overflowCounter0 / calculateTimerTicksPerSec<0>() )% 60;
+  return (uint8_t)(overflowCounter0 / calculateTimerTicksPerSec<0>() );
+}
+
+void setHours(uint8_t value)
+{
+  setInterruptionFlags<0>(0 << 0);
+  hours = value;
+  setInterruptionFlags<0>(1 << 0);
+}
+
+void setMinutes(uint8_t value) {
+  setInterruptionFlags<0>(0 << 0);
+  minutes = value;
+  setInterruptionFlags<0>(1 << 0);
+}
+
+void setSeconds(uint8_t value) {
+  setInterruptionFlags<0>(0 << 0);
+  uint8_t current_sec = getSeconds();
+  overflowCounter0 = overflowCounter0 - current_sec * calculateTimerTicksPerSec<0>();
+  overflowCounter0 = overflowCounter0 + value * calculateTimerTicksPerSec<0>();
+  TCNT0 = 0;
+  setInterruptionFlags<0>(1 << 0);
 }
 
 ISR(TIMER0_OVF_vect)
 {
-  // temps_max_overflow = 255 / calculateTimerTicksPerSec<0>();
-  // temps_max_overflow = 255 / calculateTimerTicksPerSec<0>();
-//  if (etallo)
-//    nbCycleTimer0 = nbCycleTimer0 + 1;
-//  else {
-    overflowCounter0 = overflowCounter0 + 1;
-//    if(overflowCounter0 == calculateTimerTicksPerSec<0>()* 3600 * 12)
-//      overflowCounter0 = 0;
-//  }
-
-//  tickCounters[0] = tickCounters[0] + 255;
-//  if(tickCounters[0] == calculateTimerTicksPerSec<0>() * 3600 * 12)
-//    tickCounters[0] = 0;
+  overflowCounter0 = overflowCounter0 + 1;
+  if( overflowCounter0 == calculateTimerTicksPerSec<0>()* 60) {
+     overflowCounter0 = 0;
+     minutes = minutes + 1;
+     if ( minutes == 60) {
+       hours = hours + 1;
+       minutes = 0;
+     }
+  }
 }
 
 ISR(TIMER1_OVF_vect)
 {
-  serial::transmit("Error: Timer1 shouldn't overflow ! (reset by encoder)\n");
-//    countTimer1 = countTimer1 + ( 1 << 15);
+  if(warning_enabled)
+    serial::transmit("Error: Timer1 shouldn't overflow ! (reset by encoder)\n");
 }
 
 }

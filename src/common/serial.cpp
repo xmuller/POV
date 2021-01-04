@@ -50,13 +50,15 @@ namespace pov::serial
     while (!dataAvailable())
     {}
 
-    /* Put data into buffer, sends the data */
-    if (UCSR0A & (1 << FE0))
-      serial::transmit("Frame error\n");
-    if (UCSR0A & (1 << DOR0))
-      serial::transmit("Data overrun\n");
-    if (UCSR0A & (1 << UPE0))
-      serial::transmit("Parity error\n");
+    if(warning_enabled) {
+      /* Put data into buffer, sends the data */
+      if (UCSR0A & (1 << FE0))
+        serial::transmit("Frame error\n");
+      if (UCSR0A & (1 << DOR0))
+        serial::transmit("Data overrun\n");
+      if (UCSR0A & (1 << UPE0))
+        serial::transmit("Parity error\n");
+    }
     /* Get and return received data from buffer */
     return (char)UDR0;
   }
@@ -77,9 +79,11 @@ namespace pov::serial
 
   ISR(USART_RX_vect) {
     char c = serial::receive();
-    io_buffer.push(c);
-    if ( c == '\n' ) { // command received
-        shell::shellTick();
+    if( !run_shell ) {
+      io_buffer.push(c);
+      if ( c == '\n' )
+        run_shell = true;
     }
+
   }
 }

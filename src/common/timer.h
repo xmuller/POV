@@ -7,13 +7,12 @@ namespace pov::timer
 {
 constexpr uint8_t NB_MAX_TIMERS = 3;
 
-inline volatile double angle = 0;
-inline volatile double angleHour = 0;
-inline volatile double angleMinute = 0;
+// we are using an overflow counter because the timer overflow in less than 1 sec
+// this value is used to count the secondes
+inline volatile uint16_t overflowCounter0 = 0;
 
-inline volatile uint32_t tickCounters[NB_MAX_TIMERS];
-
-inline volatile uint16_t overflowCounter0 = 0;        //Nombre de cycle en cours sur le timer0
+inline volatile uint8_t hours = 0;
+inline volatile uint8_t minutes = 0;
 
 template<uint8_t TIMER_ID>
 inline uint16_t getCurrentTime() {
@@ -28,10 +27,9 @@ uint8_t getHours();
 uint8_t getMinutes();
 uint8_t getSeconds();
 
-double getAngle();
-double getAngleMinute();
-double getAngleHour();
-void setAngle(double ang);
+void setHours(uint8_t value);
+void setMinutes(uint8_t value);
+void setSeconds(uint8_t value);
 
 /**
  * @brief init system_clock

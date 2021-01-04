@@ -7,6 +7,9 @@
 
 namespace pov
 {
+inline constinit bool warning_enabled = false;
+inline bool run_shell = false;
+
 constexpr uint16_t RADIUS_MICRO_METER = 0.09e4;
 constexpr uint16_t PIx2 = 3.1415e4 * 2;
 
