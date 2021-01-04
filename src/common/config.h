@@ -1,6 +1,7 @@
 #pragma once
 
 #include "serial.h"
+#include "shell.h"
 #include "timer.h"
 #include "common/led_spi.h"
 
@@ -11,8 +12,7 @@ constexpr uint16_t PIx2 = 3.1415e4 * 2;
 
 namespace led_spi {
 constexpr Config config  {
-//  .INITIAL_LEDS_STATE =   0b0101010101010101
-  .INITIAL_LEDS_STATE = 0b1
+  .INITIAL_LEDS_STATE = 0
 };
 }
 
@@ -39,7 +39,17 @@ namespace serial {
 constexpr Config config {
   .BAUD_RATE 	 = 38400,
   .BAUD_RATE_TOL = 10,
-  .MODE = serial::Mode::ASYNCHRONOUS_NORMAL
+  .MODE = serial::Mode::ASYNCHRONOUS_NORMAL,
+  .PRINT_BUFFER_SIZE = 100
+};
+}
+
+namespace shell {
+constexpr Config config {
+  .MAX_ARGUMENTS = 4,
+  .MAX_LINE_SIZE = 64,
+  .NEW_LINE_STRING = "\n",
+  .PROMPT = "pov> "
 };
 }
 

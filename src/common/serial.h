@@ -1,6 +1,8 @@
 #pragma once
 
 #include <stdint.h>
+#include "ring_buffer.h"
+
 /**
  * @namespace common::serial
  * Implementation of the USART0 serial driver.
@@ -17,15 +19,20 @@ namespace pov::serial {
      long int BAUD_RATE;
      long int BAUD_RATE_TOL;
      Mode MODE;
+     long int PRINT_BUFFER_SIZE;
   };
 
   void init();
   void transmit(char data);
   void transmit(const char *s);
 
-  uint8_t receive();
+  void printf(const char* fmt, ...);
+
+  char receive();
 //  int receive(unsigned char* buffer, unsigned int len);
   bool dataAvailable();
+
+  inline RingBuffer<char, 100> io_buffer;
 
 
 namespace internal {
