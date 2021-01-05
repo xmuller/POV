@@ -160,15 +160,15 @@ void loopMode1() {
 }
 
 
-#define TIME_TO_ACTIVATE 500
-#define WIDTH_DIGIT 600
+#define TIME_TO_ACTIVATE 800
+#define WIDTH_DIGIT 1000
 
 void loopMode2()
 {
   led_spi::setAllLedsDown();
   auto current_time = timer::getCurrentTime<1>();
   char buf[12];
-  sprintf(buf, "%u:%u:%u", timer::getHours(), timer::getMinutes(), timer::getSeconds());
+  sprintf(buf, "%u:%u", timer::getHours(), timer::getMinutes());
   for(unsigned int i = 0; i < 12; i++)
   {
     if(buf[i] == '0')
@@ -196,7 +196,7 @@ void loopMode2()
     }
     if(buf[i] == '1')
     {
-      if(current_time > (0.4 * TIME_TO_ACTIVATE + i * 300) && current_time < (0.6 * TIME_TO_ACTIVATE + i * 300))
+      if(current_time > (0.4 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.6 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT))
       {
         led_spi::setLedUp(12);
         led_spi::setLedUp(10);
@@ -205,65 +205,65 @@ void loopMode2()
         led_spi::setLedUp(7);
       }
 
-      if(current_time > (0.35 * TIME_TO_ACTIVATE + i * 300) && current_time < (0.65 * TIME_TO_ACTIVATE + i * 300))
+      if(current_time > (0.35 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.65 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT))
         led_spi::setLedUp(11);
 
-      if(current_time > (0.3 * TIME_TO_ACTIVATE + i * 300) && current_time < (0.7 * TIME_TO_ACTIVATE + i * 300))
+      if(current_time > (0.3 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.7 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT))
         led_spi::setLedUp(6);
     }
     if(buf[i] == '2')
     {
-      if(current_time > (0.25 * TIME_TO_ACTIVATE + i * 300) && current_time < (0.85 * TIME_TO_ACTIVATE + i * 300))
+      if(current_time > (0.25 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.85 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT))
         led_spi::setLedUp(12);
 
       if((current_time > (0.05 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.25 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) )
         || (current_time > (0.7 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.95 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT)))
         led_spi::setLedUp(11);
 
-      if(current_time > (0.55 * TIME_TO_ACTIVATE + i * 300) && current_time < (0.7 * TIME_TO_ACTIVATE + i * 300))
+      if(current_time > (0.55 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.7 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT))
         led_spi::setLedUp(10);
 
-      if(current_time > (0.4 * TIME_TO_ACTIVATE + i * 300) && current_time < (0.55 * TIME_TO_ACTIVATE + i * 300))
+      if(current_time > (0.4 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.55 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT))
         led_spi::setLedUp(9);
 
-      if(current_time > (0.25 * TIME_TO_ACTIVATE + i * 300) && current_time < (0.4 * TIME_TO_ACTIVATE + i * 300))
+      if(current_time > (0.25 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.4 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT))
         led_spi::setLedUp(8);
 
-      if(current_time > (0.1 * TIME_TO_ACTIVATE + i * 300) && current_time < (0.25 * TIME_TO_ACTIVATE + i * 300))
+      if(current_time > (0.1 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.25 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT))
         led_spi::setLedUp(7);
 
-      if(current_time > (0.05 * TIME_TO_ACTIVATE + i * 300) && current_time < (0.95 * TIME_TO_ACTIVATE + i * 300))
+      if(current_time > (0.05 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.95 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT))
         led_spi::setLedUp(6);
 
     }
     if(buf[i] == '3')
     {
-      if(current_time > (0.0 * TIME_TO_ACTIVATE + i * 300) && current_time < (0.8 * TIME_TO_ACTIVATE + i * 300))
+      if(current_time > (0.0 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.8 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT))
         led_spi::setLedUp(12);
 
-      if(current_time > (0.6 * TIME_TO_ACTIVATE + i * 300) && current_time < (0.75 * TIME_TO_ACTIVATE + i * 300))
+      if(current_time > (0.6 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.75 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT))
       {
         led_spi::setLedUp(11);
         led_spi::setLedUp(9);
       }
 
-      if(current_time > (0.45 * TIME_TO_ACTIVATE + i * 300) && current_time < (0.6 * TIME_TO_ACTIVATE + i * 300))
+      if(current_time > (0.45 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.6 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT))
         led_spi::setLedUp(10);
 
-      if(current_time > (0.75 * TIME_TO_ACTIVATE + i * 300) && current_time < (0.9 * TIME_TO_ACTIVATE + i * 300))
+      if(current_time > (0.75 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.9 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT))
         led_spi::setLedUp(8);
 
       if((current_time > (0.0 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.2 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) )
         || (current_time > (0.8 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.95 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT)))
         led_spi::setLedUp(7);
 
-      if(current_time > (0.2 * TIME_TO_ACTIVATE + i * 300) && current_time < (0.8 * TIME_TO_ACTIVATE + i * 300))
+      if(current_time > (0.2 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.8 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT))
         led_spi::setLedUp(6);
 
     }
     if(buf[i] == '4')
     {
-      if(current_time > (0.5 * TIME_TO_ACTIVATE + i * 300) && current_time < (0.8 * TIME_TO_ACTIVATE + i * 300))
+      if(current_time > (0.5 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.8 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT))
         led_spi::setLedUp(12);
 
       if((current_time > (0.4 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.55 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) )
@@ -278,10 +278,10 @@ void loopMode2()
         || (current_time > (0.6 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.8 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT)))
         led_spi::setLedUp(9);
 
-      if(current_time > (0.0 * TIME_TO_ACTIVATE + i * 300) && current_time < (1.0 * TIME_TO_ACTIVATE + i * 300))
+      if(current_time > (0.0 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (1.0 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT))
         led_spi::setLedUp(8);
 
-      if(current_time > (0.6 * TIME_TO_ACTIVATE + i * 300) && current_time < (0.8 * TIME_TO_ACTIVATE + i * 300))
+      if(current_time > (0.6 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.8 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT))
       {
         led_spi::setLedUp(7);
         led_spi::setLedUp(6);
@@ -289,38 +289,38 @@ void loopMode2()
     }
     if(buf[i] == '5')
     {
-      if(current_time > (i * 300) && current_time < (0.85 * TIME_TO_ACTIVATE + i * 300))
+      if(current_time > (i * WIDTH_DIGIT) && current_time < (0.85 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT))
       {
         led_spi::setLedUp(12);
         led_spi::setLedUp(10);
       }
 
-      if(current_time > (i * 300) && current_time < (0.1 * TIME_TO_ACTIVATE + i * 300))
+      if(current_time > (i * WIDTH_DIGIT) && current_time < (0.1 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT))
         led_spi::setLedUp(11);
 
-      if(current_time > (0.75 * TIME_TO_ACTIVATE + i * 300) && current_time < (0.9 * TIME_TO_ACTIVATE + i * 300))
+      if(current_time > (0.75 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.9 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT))
         led_spi::setLedUp(9);
 
-      if(current_time > (0.8 * TIME_TO_ACTIVATE + i * 300) && current_time < (0.95 * TIME_TO_ACTIVATE + i * 300))
+      if(current_time > (0.8 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.95 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT))
         led_spi::setLedUp(8);
 
       if((current_time > (i * WIDTH_DIGIT) && current_time < (0.15 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) )
         || (current_time > (0.75 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.9 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT)))
         led_spi::setLedUp(7);
 
-      if(current_time > (0.15 * TIME_TO_ACTIVATE + i * 300) && current_time < (0.85 * TIME_TO_ACTIVATE + i * 300))
+      if(current_time > (0.15 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.85 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT))
         led_spi::setLedUp(6);
     }
     if(buf[i] == '6')
     {
-      if(current_time > (0.15 * TIME_TO_ACTIVATE + i * 300) && current_time < (0.85 * TIME_TO_ACTIVATE + i * 300))
+      if(current_time > (0.15 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.85 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT))
       {
         led_spi::setLedUp(12);
         led_spi::setLedUp(10);
         led_spi::setLedUp(6);
       }
 
-      if(current_time > (0.05 * TIME_TO_ACTIVATE + i * 300) && current_time < (0.25 * TIME_TO_ACTIVATE + i * 300))
+      if(current_time > (0.05 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.25 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT))
         led_spi::setLedUp(11);
 
       if((current_time > (0.05 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.25 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) )
@@ -330,36 +330,36 @@ void loopMode2()
         led_spi::setLedUp(7);
       }
 
-      if((current_time > (i * 300) && current_time < (0.1 * TIME_TO_ACTIVATE + i * 300))
+      if((current_time > (i * WIDTH_DIGIT) && current_time < (0.1 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT))
         || (current_time > (0.9 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (TIME_TO_ACTIVATE + i * WIDTH_DIGIT)))
         led_spi::setLedUp(8);
     }
     if(buf[i] == '7')
     {
-      if(current_time > (0.1 * TIME_TO_ACTIVATE + i * 300) && current_time < (0.9 * TIME_TO_ACTIVATE + i * 300))
+      if(current_time > (0.1 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.9 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT))
         led_spi::setLedUp(12);
 
-      if(current_time > (0.75 * TIME_TO_ACTIVATE + i * 300) && current_time < (0.9 * TIME_TO_ACTIVATE + i * 300))
+      if(current_time > (0.75 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.9 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT))
         led_spi::setLedUp(11);
 
-      if(current_time > (0.6 * TIME_TO_ACTIVATE + i * 300) && current_time < (0.75 * TIME_TO_ACTIVATE + i * 300))
+      if(current_time > (0.6 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.75 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT))
         led_spi::setLedUp(10);
 
-      if(current_time > (0.45 * TIME_TO_ACTIVATE + i * 300) && current_time < (0.6 * TIME_TO_ACTIVATE + i * 300))
+      if(current_time > (0.45 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.6 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT))
         led_spi::setLedUp(9);
 
-      if(current_time > (0.3 * TIME_TO_ACTIVATE + i * 300) && current_time < (0.45 * TIME_TO_ACTIVATE + i * 300))
+      if(current_time > (0.3 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.45 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT))
         led_spi::setLedUp(8);
 
-      if(current_time > (0.15 * TIME_TO_ACTIVATE + i * 300) && current_time < (0.3 * TIME_TO_ACTIVATE + i * 300))
+      if(current_time > (0.15 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.3 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT))
         led_spi::setLedUp(7);
 
-      if(current_time > (i * 300) && current_time < (0.15 * TIME_TO_ACTIVATE + i * 300))
+      if(current_time > (i * WIDTH_DIGIT) && current_time < (0.15 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT))
         led_spi::setLedUp(6);
     }
     if(buf[i] == '8')
     {
-      if(current_time > (0.15 * TIME_TO_ACTIVATE + i * 300) && current_time < (0.85 * TIME_TO_ACTIVATE + i * 300))
+      if(current_time > (0.15 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.85 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT))
       {
         led_spi::setLedUp(12);
         led_spi::setLedUp(6);
@@ -373,7 +373,7 @@ void loopMode2()
         led_spi::setLedUp(8);
       }
 
-      if((current_time > (i * 300) && current_time < (0.9 * TIME_TO_ACTIVATE + i * 300))
+      if((current_time > (i * WIDTH_DIGIT) && current_time < (0.9 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT))
         || (current_time > (0.9 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (TIME_TO_ACTIVATE + i * WIDTH_DIGIT)))
       {
         led_spi::setLedUp(10);
@@ -382,21 +382,21 @@ void loopMode2()
     }
     if(buf[i] == '9')
     {
-      if(current_time > (0.15 * TIME_TO_ACTIVATE + i * 300) && current_time < (0.85 * TIME_TO_ACTIVATE + i * 300))
+      if(current_time > (0.15 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.85 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT))
       {
         led_spi::setLedUp(12);
         led_spi::setLedUp(8);
         led_spi::setLedUp(6);
       }
 
-      if((current_time > (0.05 * TIME_TO_ACTIVATE + i * 300) && current_time < (0.25 * TIME_TO_ACTIVATE + i * 300))
+      if((current_time > (0.05 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.25 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT))
         || (current_time > (0.75 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.95 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT)))
       {
         led_spi::setLedUp(11);
         led_spi::setLedUp(9);
       }
 
-      if(current_time > (i * 300) && current_time < (0.9 * TIME_TO_ACTIVATE + i * 300))
+      if(current_time > (i * WIDTH_DIGIT) && current_time < (0.9 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT))
         led_spi::setLedUp(10);
     }
     if(buf[i] == ':')
