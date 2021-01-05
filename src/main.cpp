@@ -12,14 +12,13 @@
 
 using namespace pov;
 
-uint8_t current_mode = 0;
+uint8_t current_mode = 1;
 uint16_t main_loop_duration = 0;
 
 void povInfo(unsigned int, char* []) {
-  serial::printf("current mode       : %hu\n"
-                 "pov speed RPM      : %hu\n", current_mode, main_loop_duration);
-  serial::printf("time (us) one turn : %hu\n"
-                 "time main loop (us): %hu\n", encoder::time_per_round, main_loop_duration);
+  serial::printf("current mode       : %hu\n", current_mode);
+  serial::printf("ticks one turn : %hu\n"
+                 "ticks main loop (us): %hu\n", encoder::time_per_round, main_loop_duration);
 }
 
 
@@ -41,16 +40,21 @@ void time(unsigned int argc, char* argv []) {
 }
 
 void blinkPD6(unsigned int argc, char* argv[]) {
-  int blink_counter = (argc != 0) ? atoi(argv[0]) : 5;
-  serial::printf("Blink %i times\n", blink_counter);
+  int test_duration_sec = (argc != 0) ? atoi(argv[0]) : 5;
 
   DDRD = DDRD | (1 << PD6);
-  while (blink_counter > 0) {
+
+  uint8_t begin_time = timer::getSeconds();
+  uint16_t end_time = (uint8_t)(begin_time + test_duration_sec)%60;
+  bool end = false;
+  while(!end) {
+    uint8_t time = timer::getSeconds();
+    end = (time == end_time);
     PORTD = PORTD | (1 << PD6);
-    _delay_ms(500);
+    _delay_ms(250);
     PORTD = PORTD & (0 << PD6);
-    _delay_ms(500);
-    blink_counter--;
+    _delay_ms(250);
+    serial::printf("Blink PD6 time:(%i/%i) \n", time, end_time);
   }
 }
 
@@ -126,7 +130,7 @@ const shell::ShellCommand shell::shell_commands[] = {
 };
 
 // Standard clock with needle
-void loopMode0() {
+void loopMode1() {
   uint16_t time_hours_activation = encoder::time_per_round - encoder::time_per_round / 12 * (timer::getHours());
   uint16_t time_minutes_activation = encoder::time_per_round - encoder::time_per_round / 60 * (timer::getMinutes());
   uint16_t time_secondes_activation = encoder::time_per_round - encoder::time_per_round / 60 * timer::getSeconds();
@@ -156,11 +160,10 @@ void loopMode0() {
 }
 
 
-
 #define TIME_TO_ACTIVATE 500
 #define WIDTH_DIGIT 600
 
-void loopMode1()
+void loopMode2()
 {
   led_spi::setAllLedsDown();
   auto current_time = timer::getCurrentTime<1>();
@@ -214,9 +217,9 @@ void loopMode1()
         led_spi::setLedUp(12);
 
       if((current_time > (0.05 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.25 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) )
-        || (current_time > (0.7 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.95 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT)))     
+        || (current_time > (0.7 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.95 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT)))
         led_spi::setLedUp(11);
-      
+
       if(current_time > (0.55 * TIME_TO_ACTIVATE + i * 300) && current_time < (0.7 * TIME_TO_ACTIVATE + i * 300))
         led_spi::setLedUp(10);
 
@@ -237,7 +240,7 @@ void loopMode1()
     {
       if(current_time > (0.0 * TIME_TO_ACTIVATE + i * 300) && current_time < (0.8 * TIME_TO_ACTIVATE + i * 300))
         led_spi::setLedUp(12);
-        
+
       if(current_time > (0.6 * TIME_TO_ACTIVATE + i * 300) && current_time < (0.75 * TIME_TO_ACTIVATE + i * 300))
       {
         led_spi::setLedUp(11);
@@ -246,12 +249,12 @@ void loopMode1()
 
       if(current_time > (0.45 * TIME_TO_ACTIVATE + i * 300) && current_time < (0.6 * TIME_TO_ACTIVATE + i * 300))
         led_spi::setLedUp(10);
-      
+
       if(current_time > (0.75 * TIME_TO_ACTIVATE + i * 300) && current_time < (0.9 * TIME_TO_ACTIVATE + i * 300))
         led_spi::setLedUp(8);
-      
+
       if((current_time > (0.0 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.2 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) )
-        || (current_time > (0.8 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.95 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT)))     
+        || (current_time > (0.8 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.95 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT)))
         led_spi::setLedUp(7);
 
       if(current_time > (0.2 * TIME_TO_ACTIVATE + i * 300) && current_time < (0.8 * TIME_TO_ACTIVATE + i * 300))
@@ -264,17 +267,17 @@ void loopMode1()
         led_spi::setLedUp(12);
 
       if((current_time > (0.4 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.55 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) )
-        || (current_time > (0.6 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.8 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT)))     
+        || (current_time > (0.6 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.8 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT)))
         led_spi::setLedUp(11);
 
       if((current_time > (0.3 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.45 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) )
-        || (current_time > (0.6 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.8 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT)))     
+        || (current_time > (0.6 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.8 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT)))
         led_spi::setLedUp(10);
 
       if((current_time > (0.15 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.35 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) )
-        || (current_time > (0.6 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.8 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT)))     
+        || (current_time > (0.6 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.8 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT)))
         led_spi::setLedUp(9);
-      
+
       if(current_time > (0.0 * TIME_TO_ACTIVATE + i * 300) && current_time < (1.0 * TIME_TO_ACTIVATE + i * 300))
         led_spi::setLedUp(8);
 
@@ -287,7 +290,7 @@ void loopMode1()
     if(buf[i] == '5')
     {
       if(current_time > (i * 300) && current_time < (0.85 * TIME_TO_ACTIVATE + i * 300))
-      { 
+      {
         led_spi::setLedUp(12);
         led_spi::setLedUp(10);
       }
@@ -302,7 +305,7 @@ void loopMode1()
         led_spi::setLedUp(8);
 
       if((current_time > (i * WIDTH_DIGIT) && current_time < (0.15 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) )
-        || (current_time > (0.75 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.9 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT)))     
+        || (current_time > (0.75 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.9 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT)))
         led_spi::setLedUp(7);
 
       if(current_time > (0.15 * TIME_TO_ACTIVATE + i * 300) && current_time < (0.85 * TIME_TO_ACTIVATE + i * 300))
@@ -321,14 +324,14 @@ void loopMode1()
         led_spi::setLedUp(11);
 
       if((current_time > (0.05 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.25 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) )
-        || (current_time > (0.75 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.95 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT)))     
+        || (current_time > (0.75 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.95 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT)))
       {
         led_spi::setLedUp(9);
         led_spi::setLedUp(7);
       }
 
       if((current_time > (i * 300) && current_time < (0.1 * TIME_TO_ACTIVATE + i * 300))
-        || (current_time > (0.9 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (TIME_TO_ACTIVATE + i * WIDTH_DIGIT)))     
+        || (current_time > (0.9 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (TIME_TO_ACTIVATE + i * WIDTH_DIGIT)))
         led_spi::setLedUp(8);
     }
     if(buf[i] == '7')
@@ -338,7 +341,7 @@ void loopMode1()
 
       if(current_time > (0.75 * TIME_TO_ACTIVATE + i * 300) && current_time < (0.9 * TIME_TO_ACTIVATE + i * 300))
         led_spi::setLedUp(11);
-      
+
       if(current_time > (0.6 * TIME_TO_ACTIVATE + i * 300) && current_time < (0.75 * TIME_TO_ACTIVATE + i * 300))
         led_spi::setLedUp(10);
 
@@ -357,13 +360,13 @@ void loopMode1()
     if(buf[i] == '8')
     {
       if(current_time > (0.15 * TIME_TO_ACTIVATE + i * 300) && current_time < (0.85 * TIME_TO_ACTIVATE + i * 300))
-      {  
+      {
         led_spi::setLedUp(12);
         led_spi::setLedUp(6);
       }
 
       if((current_time > (0.05 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.25 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) )
-        || (current_time > (0.75 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.95 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT)))     
+        || (current_time > (0.75 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.95 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT)))
       {
         led_spi::setLedUp(11);
         led_spi::setLedUp(7);
@@ -371,7 +374,7 @@ void loopMode1()
       }
 
       if((current_time > (i * 300) && current_time < (0.9 * TIME_TO_ACTIVATE + i * 300))
-        || (current_time > (0.9 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (TIME_TO_ACTIVATE + i * WIDTH_DIGIT)))     
+        || (current_time > (0.9 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (TIME_TO_ACTIVATE + i * WIDTH_DIGIT)))
       {
         led_spi::setLedUp(10);
         led_spi::setLedUp(9);
@@ -380,14 +383,14 @@ void loopMode1()
     if(buf[i] == '9')
     {
       if(current_time > (0.15 * TIME_TO_ACTIVATE + i * 300) && current_time < (0.85 * TIME_TO_ACTIVATE + i * 300))
-      {  
+      {
         led_spi::setLedUp(12);
         led_spi::setLedUp(8);
         led_spi::setLedUp(6);
       }
 
       if((current_time > (0.05 * TIME_TO_ACTIVATE + i * 300) && current_time < (0.25 * TIME_TO_ACTIVATE + i * 300))
-        || (current_time > (0.75 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.95 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT)))     
+        || (current_time > (0.75 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT) && current_time < (0.95 * TIME_TO_ACTIVATE + i * WIDTH_DIGIT)))
       {
         led_spi::setLedUp(11);
         led_spi::setLedUp(9);
@@ -409,6 +412,10 @@ void loopMode1()
   led_spi::masterTransmit();
 }
 
+void loopMode3() {
+
+}
+
 int main() {
   sei();
   encoder::init();
@@ -419,10 +426,12 @@ int main() {
   while (1)
   {
     main_loop_duration = timer::getCurrentTime<1>();
-    if(current_mode == 0)
-      loopMode0();
     if(current_mode == 1)
       loopMode1();
+    if(current_mode == 2)
+      loopMode2();
+    if(current_mode == 3)
+      loopMode3();
     if(current_mode == 4) // idle mode
       _delay_ms(300);
     main_loop_duration = timer::getCurrentTime<1>() - main_loop_duration;
